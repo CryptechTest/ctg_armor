@@ -33,7 +33,7 @@ if true then
 	armor:register_armor(":ctg_armor:helmet_lead", {
 		description = S("Lead Helmet"),
 		inventory_image = "ctg_armor_inv_helmet_lead.png",
-		groups = {armor_head=1, armor_heal=0, armor_use=800,
+		groups = {radiation=83, armor_head=1, armor_heal=0, armor_use=800,
 			physics_speed=-0.06, physics_gravity=0.03, physics_jump=-0.086},
 		armor_groups = {fleshy=10},
 		damage_groups = {cracky=2, snappy=3, choppy=2, crumbly=1, level=2},
@@ -56,7 +56,7 @@ if true then
 	armor:register_armor(":ctg_armor:chestplate_lead", {
 		description = S("Lead Chestplate"),
 		inventory_image = "ctg_armor_inv_chestplate_lead.png",
-		groups = {armor_torso=1, armor_heal=0, armor_use=800,
+		groups = {radiation=65, armor_torso=1, armor_heal=0, armor_use=800,
 			physics_speed=-0.09, physics_gravity=0.06, physics_jump=-0.174},
 		armor_groups = {fleshy=15},
 		damage_groups = {cracky=2, snappy=3, choppy=2, crumbly=1, level=2},
@@ -79,7 +79,7 @@ if true then
 	armor:register_armor(":ctg_armor:leggings_lead", {
 		description = S("Lead Leggings"),
 		inventory_image = "ctg_armor_inv_leggings_lead.png",
-		groups = {armor_legs=1, armor_heal=0, armor_use=800,
+		groups = {radiation=69, armor_legs=1, armor_heal=0, armor_use=800,
 			physics_speed=-0.07, physics_gravity=0.05, physics_jump=-0.152},
 		armor_groups = {fleshy=15},
 		damage_groups = {cracky=2, snappy=3, choppy=2, crumbly=1, level=2},
@@ -102,7 +102,7 @@ if true then
 	armor:register_armor(":ctg_armor:boots_lead", {
 		description = S("Lead Boots"),
 		inventory_image = "ctg_armor_inv_boots_lead.png",
-		groups = {armor_feet=1, armor_heal=0, armor_use=800,
+		groups = {radiation=83, armor_feet=1, armor_heal=0, armor_use=800,
 			physics_speed=-0.06, physics_gravity=0.03, physics_jump=-0.088},
 		armor_groups = {fleshy=10},
 		damage_groups = {cracky=2, snappy=3, choppy=2, crumbly=1, level=2},
