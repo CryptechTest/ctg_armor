@@ -58,7 +58,7 @@ if true then
 		inventory_image = "ctg_armor_inv_chestplate_lead.png",
 		groups = { armor_torso=1, armor_heal=0, armor_use=800,
 			physics_speed=-0.08, physics_gravity=0.06, physics_jump=-0.174},
-		armor_groups = {fleshy=15, radiation=35,},
+		armor_groups = {fleshy=18, radiation=35},
 		damage_groups = {cracky=2, snappy=3, choppy=2, crumbly=1, level=2},
 	})
 	--- Lead Leggings
@@ -81,7 +81,7 @@ if true then
 		inventory_image = "ctg_armor_inv_leggings_lead.png",
 		groups = {armor_legs=1, armor_heal=0, armor_use=800,
 			physics_speed=-0.07, physics_gravity=0.05, physics_jump=-0.152},
-		armor_groups = {fleshy=15, radiation=31},
+		armor_groups = {fleshy=17, radiation=31},
 		damage_groups = {cracky=2, snappy=3, choppy=2, crumbly=1, level=2},
 	})
 	--- Lead Boots
