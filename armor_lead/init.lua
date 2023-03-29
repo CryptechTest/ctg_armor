@@ -15,8 +15,6 @@ local S = armor.get_translator
 
 --if armor.materials.lead then
 if true then
-
-	armor:register_armor_group("radiation", 100)
 	--- Lead Helmet
 	--
 	--  @helmet ctg_armor:helmet_lead
@@ -36,7 +34,7 @@ if true then
 		description = S("Lead Helmet"),
 		inventory_image = "ctg_armor_inv_helmet_lead.png",
 		groups = { armor_head=1, armor_heal=0, armor_use=800,
-			physics_speed=-0.06, physics_gravity=0.03, physics_jump=-0.086},
+			physics_speed=-0.05, physics_gravity=0.03, physics_jump=-0.042},
 		armor_groups = {fleshy=10, radiation=17},
 		damage_groups = {cracky=2, snappy=3, choppy=2, crumbly=1, level=2},
 	})
@@ -59,7 +57,7 @@ if true then
 		description = S("Lead Chestplate"),
 		inventory_image = "ctg_armor_inv_chestplate_lead.png",
 		groups = { armor_torso=1, armor_heal=0, armor_use=800,
-			physics_speed=-0.09, physics_gravity=0.06, physics_jump=-0.174},
+			physics_speed=-0.08, physics_gravity=0.06, physics_jump=-0.174},
 		armor_groups = {fleshy=15, radiation=35,},
 		damage_groups = {cracky=2, snappy=3, choppy=2, crumbly=1, level=2},
 	})
@@ -105,7 +103,7 @@ if true then
 		description = S("Lead Boots"),
 		inventory_image = "ctg_armor_inv_boots_lead.png",
 		groups = {armor_feet=1, armor_heal=0, armor_use=800,
-			physics_speed=-0.06, physics_gravity=0.03, physics_jump=-0.088},
+			physics_speed=-0.05, physics_gravity=0.03, physics_jump=-0.088},
 		armor_groups = {fleshy=10, radiation=17},
 		damage_groups = {cracky=2, snappy=3, choppy=2, crumbly=1, level=2},
 	})
