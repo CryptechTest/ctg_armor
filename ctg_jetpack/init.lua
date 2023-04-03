@@ -48,7 +48,7 @@ function ctg_jetpack.register_jetpack(style)
 				local v = user:get_velocity()
 				v = vector.multiply(v, 0.8)
 				v.y = math.max(v.y, -50)
-				sum_jetpack.attach_object(ent, user)
+				ctg_jetpack.attach_object(ent, user)
 				user:set_attach(ent.object)
 				ent.object:set_velocity(v)
 				ent.object:set_properties({
