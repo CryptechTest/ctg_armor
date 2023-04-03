@@ -88,6 +88,20 @@ minetest.register_on_leaveplayer(function(player)
 			return true
 		end
 	end
+	local pos = player:get_pos()
+	for i,obj in ipairs(minetest.get_objects_inside_radius(pos, 0.5)) do
+		if (obj ~= player) then
+			local parachute = obj
+			if (parachute ~= nil) then
+				local ent = parachute:get_luaentity()
+				ent.object:set_properties({
+						physical = false
+					})
+				ctg_jetpack.detach_object(ent, false)
+				return true
+			end
+		end
+	end
 end)
 
 ctg_jetpack.detach_object = function(self, change_pos)
@@ -191,8 +205,8 @@ ctg_jetpack.on_death = function(self, nothing)
 		--	driver:add_velocity(vel)
 		--end, v, self._driver)
 		driver:add_velocity(v)
-		ctg_jetpack.detach_object(self, false)
 	end
+	ctg_jetpack.detach_object(self, false)
 end
 
 

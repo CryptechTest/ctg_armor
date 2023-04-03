@@ -39,7 +39,7 @@ local setup_hud = function(player)
 		text = "Fuel-Level:",
 		alignment = HUD_ALIGNMENT,
 		scale = { x = 100, y = 100 },
-		number = 0x00AAFF
+		number = 0x00FF00
 	})
 
 	hud_data.fuel_level = player:hud_add({
@@ -49,7 +49,7 @@ local setup_hud = function(player)
 		text = "",
 		alignment = HUD_ALIGNMENT,
 		scale = { x = 100, y = 100 },
-		number = 0x00AAFF
+		number = 0x00FF00
 	})
 
 	hud_data.status_message = player:hud_add({
@@ -117,12 +117,12 @@ local update_hud = function(player, has_fuel, is_running, armor_list)
 
 	if factor_full > 0.8 then
 		-- green
-		color = get_color(0,170,255) --color = get_color(0,255,0)
+		color = color = get_color(0,255,0)
 		player:hud_change(hud_data.fuel_fg, "text", "jetpack_fuel_levels_fg_green.png")
 
     elseif factor_full > 0.4 then
         -- blue
-        color = get_color(0,170,255)
+        color = get_color(0,180,255)
 		player:hud_change(hud_data.fuel_fg, "text", "jetpack_fuel_levels_fg_blue.png")
 
 	elseif factor_full > 0.1 then
