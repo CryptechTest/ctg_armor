@@ -97,8 +97,6 @@ ctg_jetpack.detach_object = function(self, change_pos)
 	end
 	self.object:set_detach()
 	self.object:remove()
-
-	minetest.log("detached!")
 	
 	-- self:set_properties({visual_size = get_visual_size(self)})
 	-- if self:is_player() and mcl then
@@ -344,28 +342,32 @@ function ctg_jetpack.setup(style)
 	end
 end
 
-controls.register_on_hold(function(player, control_name, time)
-	if control_name == "jump" and time > 0.75 then
-		if player:get_attach() then
-			parachute = player:get_attach()
-			if (parachute ~= nil) then
-				local ent = parachute:get_luaentity()
-				ent._active = true
+function ctg_jetpack.register_control()
+	controls.register_on_hold(function(player, control_name, time)
+		if control_name == "jump" and time > 0.4 then
+			if player:get_attach() then
+				parachute = player:get_attach()
+				if (parachute ~= nil) then
+					local ent = parachute:get_luaentity()
+					ent._active = true
+				end
 			end
-		end
-		if player:get_children() then
-			parachute = player:get_children()[1]
-			if (parachute ~= nil) then
-				local ent = parachute:get_luaentity()
-				ent._age = 1
-				ent._active = true
-				if ent._flags then
-					ent._flags.ready = true
+			if player:get_children() then
+				parachute = player:get_children()[1]
+				if (parachute ~= nil) then
+					local ent = parachute:get_luaentity()
+					--ent._age = 1
+					ent._active = true
+					if ent._flags then
+						ent._flags.ready = true
+					end
 				end
 			end
 		end
-	end
-end)
+	end)
+end
+
+--ctg_jetpack.register_control()
 
 ctg_jetpack.on_step = function(self, dtime)
 	if not self._driver and self._age > 1 then
@@ -378,13 +380,20 @@ ctg_jetpack.on_step = function(self, dtime)
 		local ctrl = self._driver:get_player_control()
 		if ctrl and ctrl.jump then
 			jump = true
+		else
+			self._press = 0
 		end
 	end
-	if self._age > 1 and jump and not self._active and self._itemstack and self._driver and self._driver:is_player() then
-		--self.object:set_properties({
-		--	physical = true
-		--})
-		--self._active = true
+	if self._age > 1 and jump and not self._active then
+		--minetest.log(self._press)
+		if self._press > 0.3 then
+			self.object:set_properties({
+				physical = true
+			})
+			self._active = true
+			self._press = 0
+		end
+		self._press = self._press + dtime
 		return
 	end
 	if self._age < 1000 then self._age = self._age + dtime end
@@ -517,6 +526,7 @@ local jetpack_ENTITY_1 = {
 	_thrower = nil,
   	_pilot = nil,
   	_age = 0,
+	_press = 0,
 	_sounds = nil,
 	_itemstack = nil,
 	_disabled = false,
@@ -546,6 +556,7 @@ local jetpack_ENTITY_2 = {
 	_thrower = nil,
   	_pilot = nil,
   	_age = 0,
+	_press = 0,
 	_sounds = nil,
 	_itemstack = nil,
 	_disabled = false,
@@ -575,6 +586,7 @@ local jetpack_ENTITY_3 = {
 	_thrower = nil,
   	_pilot = nil,
   	_age = 0,
+	_press = 0,
 	_sounds = nil,
 	_itemstack = nil,
 	_disabled = false,
