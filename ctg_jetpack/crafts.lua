@@ -74,3 +74,48 @@ minetest.register_craft({
   type = "shapeless",
   recipe = {"ctg_jetpack:jetpack_fuel_hydrogen","ctg_jetpack:jetpack_titanium"}
 })
+
+
+if true then
+  local t = "ctg_world:titanium_ingot"
+  local m = "default:copper_ingot"
+  local z = "default:bronze_ingot"
+  local s = "default:steel_ingot"
+  local b = "vessels:steel_bottle"
+  local ic = "basic_materials:ic"
+  minetest.register_craft({
+    output = "ctg_jetpack:jetpack_copper",
+    recipe = {
+      {m, ic, m},
+      {m, b,  m},
+      {m, "", m},
+    },
+  })
+
+  minetest.register_craft({
+    output = "ctg_jetpack:jetpack_bronze",
+    recipe = {
+      {z, ic, z},
+      {z, b,  z},
+      {z, "", z},
+    },
+  })
+
+  minetest.register_craft({
+    output = "ctg_jetpack:jetpack_iron",
+    recipe = {
+      {s, ic, s},
+      {s, b,  s},
+      {s, "", s},
+    },
+  })
+
+  minetest.register_craft({
+    output = "ctg_jetpack:jetpack_titanium",
+    recipe = {
+      {t, ic, t},
+      {t, b,  t},
+      {t, "", t},
+    },
+  })
+end
