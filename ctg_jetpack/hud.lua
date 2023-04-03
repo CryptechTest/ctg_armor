@@ -117,7 +117,7 @@ local update_hud = function(player, has_fuel, is_running, armor_list)
 
 	if factor_full > 0.8 then
 		-- green
-		color = color = get_color(0,255,0)
+		color = get_color(0,255,0)
 		player:hud_change(hud_data.fuel_fg, "text", "jetpack_fuel_levels_fg_green.png")
 
     elseif factor_full > 0.4 then
