@@ -6,7 +6,7 @@ minetest.register_craftitem("ctg_jetpack:jetpack_fuel_steam", {
 	_tt_help = S("Used in crafting"),
 	_doc_items_longdesc = S("Fuel for a jetpack."),
 	-- _doc_items_usagehelp = how_to_throw,
-	inventory_image = "sum_jetpack_fuel.png",
+	inventory_image = "ctg_jetpack_fuel.png",
 	stack_max = 16,
 	groups = { craftitem=1, },
 })
@@ -16,7 +16,7 @@ minetest.register_craftitem("ctg_jetpack:jetpack_fuel_rocket", {
 	_tt_help = S("Used in crafting"),
 	_doc_items_longdesc = S("Fuel for a jetpack."),
 	-- _doc_items_usagehelp = how_to_throw,
-	inventory_image = "sum_jetpack_fuel.png",
+	inventory_image = "ctg_jetpack_fuel.png",
 	stack_max = 16,
 	groups = { craftitem=1, },
 })
@@ -26,7 +26,7 @@ minetest.register_craftitem("ctg_jetpack:jetpack_fuel_hydrogen", {
 	_tt_help = S("Used in crafting"),
 	_doc_items_longdesc = S("Fuel for a jetpack."),
 	-- _doc_items_usagehelp = how_to_throw,
-	inventory_image = "sum_jetpack_fuel.png",
+	inventory_image = "ctg_jetpack_fuel.png",
 	stack_max = 16,
 	groups = { craftitem=1, },
 })
