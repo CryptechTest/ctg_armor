@@ -103,6 +103,8 @@ local update_hud = function(player, has_fuel, is_running, armor_list)
 			max_wear = math.max(max_wear, item:get_wear())
 		elseif item:get_name() and string.find(item:get_name(), "ctg_jetpack:jetpack_iron") then
 			max_wear = math.max(max_wear, item:get_wear())
+		elseif item:get_name() and string.find(item:get_name(), "ctg_jetpack:jetpack_bronze") then
+			max_wear = math.max(max_wear, item:get_wear())
 		elseif item:get_name() and string.find(item:get_name(), "ctg_jetpack:jetpack_titanium") then
 			max_wear = math.max(max_wear, item:get_wear())
 		end
