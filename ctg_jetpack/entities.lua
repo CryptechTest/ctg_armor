@@ -260,7 +260,7 @@ ctg_jetpack.on_death = function(self, nothing)
 		object = self.object,
 	})
 	local v = self.object:get_velocity()
-	v = vector.multiply(v, 0.8)
+	v = vector.multiply(v, 0.01)
 	if self._driver then
 		minetest.after(0.01, function(vel, driver)
 			driver:add_velocity(vel)
@@ -277,9 +277,14 @@ ctg_jetpack.get_movement = function(self)
 	local ctrl = self._driver:get_player_control()
 	if not ctrl then return vector.new() end
 
+	local cur_y = self._driver:get_pos().y
 	local mod = self._speed
 	local dir = self._driver:get_look_dir()
-	dir.y = self._driver:get_velocity().y * 0.5
+	if (cur_y < 4000) then
+		dir.y = math.max(0, self._driver:get_velocity().y * 0.85)
+	else
+		dir.y = math.max(0, self._driver:get_velocity().y * 0.5)
+	end
 	dir = vector.normalize(dir)
 
 	local forward = 0
@@ -287,18 +292,36 @@ ctg_jetpack.get_movement = function(self)
 	local right = 0
 	if ctrl.up then
 		forward = 3 * mod
+		if (cur_y < 4000) then
+			forward = 4.21 * mod
+		end
 	elseif ctrl.down then
 		forward = -0.5 * mod
+		if (cur_y < 4000) then
+			forward = -3.5 * mod
+		end
 	end
 	if ctrl.jump then
 		up = 1.37 * mod
+		if (cur_y < 4000) then
+			up = 6.4 * mod
+		end
 	elseif ctrl.aux1 then
 		up = -1 * mod
+		if (cur_y < 4000) then
+			up = -6 * mod
+		end
 	end
 	if ctrl.left then
 		right = -2 * mod
+		if (cur_y < 4000) then
+			right = -3.7 * mod
+		end
 	elseif ctrl.right then
 		right = 2 * mod
+		if (cur_y < 4000) then
+			right = 3.7 * mod
+		end
 	end
 
 	local v = vector.new()
@@ -315,8 +338,13 @@ ctg_jetpack.get_movement = function(self)
 	local vn = vector.normalize(v)
 	local vf = vector.add(vector.multiply(v, 0.420), vn)
 	local hzm = 6
-	if vf.y > 5 then vf.y = 5 end
-	if vf.y < -2 then vf.y = -2 end
+	local vzm = 5
+	if cur_y < 4000 then
+		vzm = 7
+		hzm = 6
+	end
+	if vf.y > vzm then vf.y = vzm end
+	if vf.y < -0.2 then vf.y = -0.2 end
 	if vf.x > hzm then vf.x = hzm end
 	if vf.x < -hzm then vf.x = -hzm end
 	if vf.z > hzm then vf.z = hzm end
@@ -513,7 +541,7 @@ ctg_jetpack.do_particles = function(self, dtime)
 	end
 end
 
-local move_speed = 20
+local move_speed = 25
 ctg_jetpack.max_use_time = 30
 ctg_jetpack.wear_per_sec = 60100 / ctg_jetpack.max_use_time
 -- warn the player 5 sec before fuel runs out
@@ -661,7 +689,7 @@ ctg_jetpack.on_step = function(self, dtime)
 	end
 
 	local a = vector.new()
-	local move_mult = move_speed * dtime * 0.25
+	local move_mult = move_speed * dtime * 0.5
 	if self._disabled then move_mult = move_mult / 10 end
 
 	local move_vect = ctg_jetpack.get_movement(self)
@@ -669,13 +697,22 @@ ctg_jetpack.on_step = function(self, dtime)
 
 	local sum_air_currents = minetest.get_modpath("sum_air_currents") ~= nil
 	if sum_air_currents and sum_air_currents.get_wind ~= nil then
-		a = vector.add(a, vector.multiply(sum_air_currents.get_wind(p), dtime * 0.1 * 0.25))
+		a = vector.add(a, vector.multiply(sum_air_currents.get_wind(p), dtime * 0.1 * 0.5))
 	end
 
+	local cur_y = self._driver:get_pos().y
 	local vel = self._driver:get_velocity()
-	vel = vector.multiply(vel, -0.02)
+	if cur_y > 4000 then
+		vel = vector.multiply(vel, -0.07)
+	else
+		vel = vector.multiply(vel, -0.088)
+	end
 	if vel.y > 0 then
-		vel.y = math.min(vel.y * 2, 2)
+		if cur_y > 4000 then
+			vel.y = math.min(vel.y * 2, 2)
+		else
+			vel.y = math.min(vel.y * 2, 3)
+		end
 	end
 	vel = vector.add(a, vel)
 	self._driver:add_velocity(vel)

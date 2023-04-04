@@ -119,7 +119,7 @@ function ctg_jetpack.register_jetpack(style)
 				local parachute = player:get_children()[1]
 				if (parachute ~= nil) then
 					local ent = parachute:get_luaentity()
-					if (ent.object) then
+					if (ent and ent.object) then
 						ent.object:set_properties({
 								physical = false
 							})
