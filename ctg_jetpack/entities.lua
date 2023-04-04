@@ -294,7 +294,7 @@ ctg_jetpack.get_movement = function(self)
 	if ctrl.up then
 		forward = 3 * mod
 		if (cur_y < 4000) then
-			forward = 4.21 * mod
+			forward = 4.08 * mod
 		end
 	elseif ctrl.down then
 		forward = -0.5 * mod
@@ -305,7 +305,7 @@ ctg_jetpack.get_movement = function(self)
 	if ctrl.jump then
 		up = 1.37 * mod
 		if (cur_y < 4000) then
-			up = 4.6 * mod
+			up = 4.24 * mod
 		end
 	elseif ctrl.aux1 then
 		up = -1 * mod
@@ -316,12 +316,12 @@ ctg_jetpack.get_movement = function(self)
 	if ctrl.left then
 		right = -2 * mod
 		if (cur_y < 4000) then
-			right = -3.7 * mod
+			right = -3.4 * mod
 		end
 	elseif ctrl.right then
 		right = 2 * mod
 		if (cur_y < 4000) then
-			right = 3.7 * mod
+			right = 3.4 * mod
 		end
 	end
 
@@ -342,7 +342,7 @@ ctg_jetpack.get_movement = function(self)
 	local vzm = 4.8
 	if cur_y < 4000 then
 		vzm = 4.5
-		hzm = 4.2
+		hzm = 4.3
 	end
 	if vf.y > vzm then vf.y = vzm end
 	if vf.y < -0.2 then vf.y = -0.2 end
@@ -626,9 +626,9 @@ ctg_jetpack.on_step = function(self, dtime)
 					if name:sub(1, 12) == "ctg_jetpack:" and wear + ctg_jetpack.wear_per_sec * dtime < 60100 then
 						ctg_jetpack.set_player_wearing(player, true, true, true, armor_list, armor_inv)
 						if jump then
-							armor:damage(player, i, stack, ctg_jetpack.wear_per_sec * dtime * 3)
+							armor:damage(player, i, stack, ctg_jetpack.wear_per_sec * dtime * 5.0)
 						else
-							armor:damage(player, i, stack, ctg_jetpack.wear_per_sec * dtime * 1.4)
+							armor:damage(player, i, stack, ctg_jetpack.wear_per_sec * dtime * 2.0)
 						end
 						self._itemstack = ItemStack(stack)
 						break
