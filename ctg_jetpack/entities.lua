@@ -569,6 +569,11 @@ ctg_jetpack.on_step = function(self, dtime)
 		self.object:remove()
 		return
 	end
+	if (self._age > 1 and self._driver:get_hp() <= 0) then
+		--self.object:remove()
+		ctg_jetpack.detach_object(self, true)
+		return
+	end
 	local jump = false
 	if self._driver and self._driver:is_player() then
 		local ctrl = self._driver:get_player_control()
@@ -580,6 +585,10 @@ ctg_jetpack.on_step = function(self, dtime)
 	end
 	if self._age > 1 and jump and not self._active then
 		if self._press > 0.320 then
+			if (self._driver and self._driver:get_hp() <= 0) then
+				self.object:remove()
+				return
+			end
 			self.object:set_properties({
 				physical = true
 			})
