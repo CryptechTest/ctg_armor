@@ -179,7 +179,7 @@ local function sound_play(self, soundref, instance)
 	instance.time = 0
 	instance.handle = minetest.sound_play(soundref.name, {
 		gain = soundref.gain,
-		pitch = soundref.pitch + math.random(-0.02, 0.02),
+		pitch = soundref.pitch + math.random(-0.01, 0.01),
 		object = self.object,
 	})
 end
@@ -341,8 +341,8 @@ ctg_jetpack.get_movement = function(self)
 	local hzm = 6
 	local vzm = 5
 	if cur_y < 4000 then
-		vzm = 5
-		hzm = 5
+		vzm = 4.6
+		hzm = 4.5
 	end
 	if vf.y > vzm then vf.y = vzm end
 	if vf.y < -0.2 then vf.y = -0.2 end
@@ -589,6 +589,9 @@ ctg_jetpack.on_step = function(self, dtime)
 				self.object:remove()
 				return
 			end
+			if (self._driver and self._driver:get_attach() and #self._driver:get_attach() > 0) then
+				return
+			end
 			self.object:set_properties({
 				physical = true
 			})
@@ -596,7 +599,7 @@ ctg_jetpack.on_step = function(self, dtime)
 			self._press = 0
 			self._age = 1
 			minetest.sound_play("sum_jetpack_flame", {
-				gain = 0.6,
+				gain = 0.45,
 				object = self.object,
 			})
 		end
@@ -703,7 +706,7 @@ ctg_jetpack.on_step = function(self, dtime)
 	end
 
 	local a = vector.new()
-	local move_mult = move_speed * dtime * 0.5
+	local move_mult = move_speed * dtime * 0.4
 	if self._disabled then move_mult = move_mult / 10 end
 
 	local move_vect = ctg_jetpack.get_movement(self)
@@ -711,7 +714,7 @@ ctg_jetpack.on_step = function(self, dtime)
 
 	local sum_air_currents = minetest.get_modpath("sum_air_currents") ~= nil
 	if sum_air_currents and sum_air_currents.get_wind ~= nil then
-		a = vector.add(a, vector.multiply(sum_air_currents.get_wind(p), dtime * 0.1 * 0.5))
+		a = vector.add(a, vector.multiply(sum_air_currents.get_wind(p), dtime * 0.1 * 0.4))
 	end
 
 	local cur_y = self._driver:get_pos().y
