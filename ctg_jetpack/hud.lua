@@ -117,7 +117,7 @@ local update_hud = function(player, has_fuel, is_running, armor_list, clear)
     elseif not has_fuel then
 		player:hud_change(hud_data.status_message, "text", "Jetpack is out of fuel!")
         player:hud_change(hud_data.status_message, "number", get_color(255, 0, 0))
-    elseif last_fuel_value + 0.00001 < factor_full then
+    elseif last_fuel_value + 0.000005 < factor_full then
         player:hud_change(hud_data.status_message, "text", "Solar charger active!")
         player:hud_change(hud_data.status_message, "number", get_color(3, 252, 115))
     else

@@ -644,7 +644,7 @@ function ctg_jetpack.setup(style)
 	elseif style == "bronze" then
 		ctg_jetpack.max_use_time = 110
 	elseif style == "titanium" then
-		ctg_jetpack.max_use_time = 150
+		ctg_jetpack.max_use_time = 140
 	end	
 	ctg_jetpack.wear_per_sec = 60100 / ctg_jetpack.max_use_time
 	-- warn the player 5 sec before fuel runs out
@@ -662,9 +662,13 @@ ctg_jetpack.on_step = function(self, dtime)
 		ctg_jetpack.detach_object(self, true)
 		return
 	end
+	local move = false
 	local jump = false
 	if self._driver and self._driver:is_player() then
 		local ctrl = self._driver:get_player_control()
+		if ctrl and ctrl.left or ctrl.right or ctrl.up or ctrl.down then
+			move = true
+		end
 		if ctrl and ctrl.jump then
 			jump = true
 		else
@@ -717,7 +721,9 @@ ctg_jetpack.on_step = function(self, dtime)
 					--if addon_jetpack ~= nil and wear + ctg_jetpack.wear_per_sec * dtime < 60100 then
 						ctg_jetpack.set_player_wearing(player, true, true, true, armor_list, armor_inv)
 						if jump then
-							armor:damage(player, i, stack, ctg_jetpack.wear_per_sec * dtime * 5.0)
+							armor:damage(player, i, stack, ctg_jetpack.wear_per_sec * dtime * 6.0)
+						elseif move then
+							armor:damage(player, i, stack, ctg_jetpack.wear_per_sec * dtime * 4.0)
 						else
 							armor:damage(player, i, stack, ctg_jetpack.wear_per_sec * dtime * 2.0)
 						end

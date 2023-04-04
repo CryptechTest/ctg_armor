@@ -45,7 +45,7 @@ if true then
   })
 
   minetest.register_craft({
-    output = "ctg_jetpack:jetpack_fuel_hydrogen 6",
+    output = "ctg_jetpack:jetpack_fuel_hydrogen 4",
     recipe = {
       {d, w, d},
       {p, b, p},
@@ -53,7 +53,7 @@ if true then
     },
   })
   minetest.register_craft({
-    output = "ctg_jetpack:jetpack_fuel_hydrogen 7",
+    output = "ctg_jetpack:jetpack_fuel_hydrogen 5",
     recipe = {
       {"", w, ""},
       {p,  b,  p},
