@@ -338,8 +338,8 @@ ctg_jetpack.get_movement = function(self)
 	v.y = up
 	local vn = vector.normalize(v)
 	local vf = vector.add(vector.multiply(v, 0.420), vn)
-	local hzm = 6
-	local vzm = 5
+	local hzm = 4.6
+	local vzm = 4.8
 	if cur_y < 4000 then
 		vzm = 4.5
 		hzm = 4.2
@@ -723,7 +723,7 @@ ctg_jetpack.on_step = function(self, dtime)
 	local cur_y = self._driver:get_pos().y
 	local vel = self._driver:get_velocity()
 	if cur_y > 4000 then
-		vel = vector.multiply(vel, -0.097)
+		vel = vector.multiply(vel, -0.0925)
 	else
 		vel = vector.multiply(vel, -0.091)
 	end
