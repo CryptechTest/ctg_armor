@@ -77,7 +77,10 @@ function ctg_jetpack.register_jetpack(style)
 			end
 			--minetest.log("equipping jetpack")
 			local pos = user:get_pos()
-			minetest.after(0.3, function(pos, style, user, stack)
+			minetest.after(0.2, function(pos, style, user, stack)
+				if (user:get_hp() <= 0) then
+					return
+				end
 				local parachute = minetest.add_entity(pos, "ctg_jetpack:jetpack_"..style.."_entity")
 				local ent = parachute:get_luaentity()
 				if not ent or not user then return end

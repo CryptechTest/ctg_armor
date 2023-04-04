@@ -250,7 +250,8 @@ end
 ctg_jetpack.on_death = function(self, nothing)
 	if self._itemstack then
 		ctg_jetpack.drop_self(self)
-		end
+		self._itemstack = nil
+	end
 	self.object:set_properties({
 		physical = false
 	})
@@ -266,7 +267,7 @@ ctg_jetpack.on_death = function(self, nothing)
 			driver:add_velocity(vel)
 		end, v, self._driver)
 	end
-	ctg_jetpack.detach_object(self, false)
+	ctg_jetpack.detach_object(self, true)
 end
 
 
@@ -281,9 +282,9 @@ ctg_jetpack.get_movement = function(self)
 	local mod = self._speed
 	local dir = self._driver:get_look_dir()
 	if (cur_y < 4000) then
-		dir.y = math.max(0, self._driver:get_velocity().y * 0.85)
+		dir.y = math.max(0, self._driver:get_velocity().y * 0.65)
 	else
-		dir.y = math.max(0, self._driver:get_velocity().y * 0.5)
+		dir.y = math.max(0, self._driver:get_velocity().y * 0.70)
 	end
 	dir = vector.normalize(dir)
 
@@ -340,8 +341,8 @@ ctg_jetpack.get_movement = function(self)
 	local hzm = 6
 	local vzm = 5
 	if cur_y < 4000 then
-		vzm = 7
-		hzm = 6
+		vzm = 5
+		hzm = 5
 	end
 	if vf.y > vzm then vf.y = vzm end
 	if vf.y < -0.2 then vf.y = -0.2 end
@@ -585,6 +586,10 @@ ctg_jetpack.on_step = function(self, dtime)
 			self._active = true
 			self._press = 0
 			self._age = 1
+			minetest.sound_play("sum_jetpack_flame", {
+				gain = 0.6,
+				object = self.object,
+			})
 		end
 		self._press = self._press + dtime
 		return
@@ -629,7 +634,7 @@ ctg_jetpack.on_step = function(self, dtime)
 		self._fuel = ctg_jetpack.max_use_time - (wear / ctg_jetpack.wear_per_sec)
 		if wear >= 60100 then
 			self._disabled = true
-			ctg_jetpack.on_death(self, nil)
+			--ctg_jetpack.on_death(self, nil)
 			--self.object:remove()
 			self._active = false
 			return false
@@ -703,13 +708,13 @@ ctg_jetpack.on_step = function(self, dtime)
 	local cur_y = self._driver:get_pos().y
 	local vel = self._driver:get_velocity()
 	if cur_y > 4000 then
-		vel = vector.multiply(vel, -0.07)
+		vel = vector.multiply(vel, -0.077)
 	else
 		vel = vector.multiply(vel, -0.088)
 	end
 	if vel.y > 0 then
 		if cur_y > 4000 then
-			vel.y = math.min(vel.y * 2, 2)
+			vel.y = math.min(vel.y * 2, 3)
 		else
 			vel.y = math.min(vel.y * 2, 3)
 		end
