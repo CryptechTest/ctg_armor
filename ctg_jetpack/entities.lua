@@ -543,6 +543,15 @@ ctg_jetpack.do_particles = function(self, dtime)
 	end
 end
 
+local function has_in_range(p, c_name, rng, thres)
+	local pos = {x=p.x,y=p.y,z=p.z}
+	local range = {x=rng,y=rng,z=rng}
+	local pos1 = vector.subtract(pos, range)
+	local pos2 = vector.add(pos, range)
+	local nodes = minetest.find_nodes_in_area(pos1, pos2, {c_name})
+	return #nodes >= thres
+end
+
 local function generate_from_solar(self, dtime)
 	if self._itemstack then
 		local wear = self._itemstack:get_wear()
@@ -558,7 +567,7 @@ local function generate_from_solar(self, dtime)
 			local light = 0
 			if (_time > 0)  then
 				light = minetest.get_node_light(pos, _time / 24000)
-				if (light < 10) then
+				if (light < 12) then
 					--minetest.log("Not enough light! " .. light)
 					if self._generating then
 						ctg_jetpack.set_player_wearing(player, true, true, false, armor_list, armor_inv, true)
@@ -566,6 +575,13 @@ local function generate_from_solar(self, dtime)
 					end
 					return false
 				end
+			end
+			if (has_in_range(pos, "group:torch", 1, 1)) then
+				light = light - 3
+			elseif  (has_in_range(pos, "group:illumination_light", 1, 1)) then
+				light = light - 3
+			elseif  (has_in_range(pos, "technic:lv_lamp", 2, 1)) then
+				light = light - 5
 			end
 			local index = 0
 			for i, stack in ipairs(armor_inv:get_list("armor")) do
@@ -580,9 +596,9 @@ local function generate_from_solar(self, dtime)
 					end
 				end
 			end
-			local amt = 10 + (light - 10) * dtime * 0.5
+			local amt = 10 + (light - 13) * dtime * 0.5
 			local update = false
-			if (jetpack ~= nil and light > 10) then
+			if (jetpack ~= nil and light >= 12 and amt >= 5) then
 				for i, stack in ipairs(armor_inv:get_list("armor")) do
 					if not stack:is_empty() then
 						local name = stack:get_name()
@@ -605,6 +621,9 @@ local function generate_from_solar(self, dtime)
 			end
 			if (update) then
 				ctg_jetpack.set_player_wearing(player, true, true, false, armor_list, armor_inv)
+			elseif self._generating then
+				ctg_jetpack.set_player_wearing(player, true, true, false, armor_list, armor_inv, true)
+				self._generating = false
 			end
 			return true
 		end
