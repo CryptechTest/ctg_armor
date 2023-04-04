@@ -543,7 +543,7 @@ ctg_jetpack.do_particles = function(self, dtime)
 	end
 end
 
-local move_speed = 22
+local move_speed = 20
 ctg_jetpack.max_use_time = 30
 ctg_jetpack.wear_per_sec = 60100 / ctg_jetpack.max_use_time
 -- warn the player 5 sec before fuel runs out
@@ -626,9 +626,9 @@ ctg_jetpack.on_step = function(self, dtime)
 					if name:sub(1, 12) == "ctg_jetpack:" and wear + ctg_jetpack.wear_per_sec * dtime < 60100 then
 						ctg_jetpack.set_player_wearing(player, true, true, true, armor_list, armor_inv)
 						if jump then
-							armor:damage(player, i, stack, ctg_jetpack.wear_per_sec * dtime * 5)
+							armor:damage(player, i, stack, ctg_jetpack.wear_per_sec * dtime * 3)
 						else
-							armor:damage(player, i, stack, ctg_jetpack.wear_per_sec * dtime * 2.28)
+							armor:damage(player, i, stack, ctg_jetpack.wear_per_sec * dtime * 1.4)
 						end
 						self._itemstack = ItemStack(stack)
 						break
@@ -709,7 +709,7 @@ ctg_jetpack.on_step = function(self, dtime)
 	end
 
 	local a = vector.new()
-	local move_mult = move_speed * dtime
+	local move_mult = move_speed * dtime * 0.88
 	if self._disabled then move_mult = move_mult / 10 end
 
 	local move_vect = ctg_jetpack.get_movement(self)
@@ -723,13 +723,13 @@ ctg_jetpack.on_step = function(self, dtime)
 	local cur_y = self._driver:get_pos().y
 	local vel = self._driver:get_velocity()
 	if cur_y > 4000 then
-		vel = vector.multiply(vel, -0.077)
+		vel = vector.multiply(vel, -0.097)
 	else
-		vel = vector.multiply(vel, -0.088)
+		vel = vector.multiply(vel, -0.091)
 	end
 	if vel.y > 0 then
 		if cur_y > 4000 then
-			vel.y = math.min(vel.y * 2, 3)
+			vel.y = math.min(vel.y * 2, 2)
 		else
 			vel.y = math.min(vel.y * 2, 3)
 		end
