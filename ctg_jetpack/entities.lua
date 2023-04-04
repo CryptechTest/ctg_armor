@@ -375,6 +375,13 @@ local particles_1 = {
 		size = 1,
 		glow = 13,
 		cols = false},
+	trail = {
+		texture = "ctg_jetpack_smoke_cloud.png",
+		vel = 22,
+		time = 6,
+		size = 3,
+		glow = 2,
+		cols = true},
 }
 local particles_2 = {
 	flame = {
@@ -398,6 +405,13 @@ local particles_2 = {
 		size = 1,
 		glow = 13,
 		cols = false},
+	trail = {
+		texture = "ctg_jetpack_smoke_cloud.png",
+		vel = 22,
+		time = 5.5,
+		size = 3,
+		glow = 2,
+		cols = true},
 }
 local particles_3 = {
 	flame = {
@@ -421,6 +435,13 @@ local particles_3 = {
 		size = 1,
 		glow = 13,
 		cols = false},
+	trail = {
+		texture = "ctg_jetpack_vapor_cloud.png",
+		vel = 22,
+		time = 5,
+		size = 3,
+		glow = 2,
+		cols = true},
 }
 local particles_4 = {
 	flame = {
@@ -444,22 +465,33 @@ local particles_4 = {
 		size = 0.95,
 		glow = 13,
 		cols = false},
+	trail = {
+		texture = "ctg_jetpack_vapor_cloud.png",
+		vel = 22,
+		time = 6,
+		size = 3,
+		glow = 2,
+		cols = true},
 }
-local particles_5 = {flame = { texture = "" }}
+local particles_5 = {flame = {}, smoke = {}, spark = {}, trail = {}}
 
 particles_1.flame.texture_r180 = particles_1.flame.texture .. "^[transformR180"
 particles_1.smoke.texture_r180 = particles_1.smoke.texture .. "^[transformR180"
 particles_1.spark.texture_r180 = particles_1.spark.texture .. "^[transformR180"
+particles_1.trail.texture_r180 = particles_1.trail.texture .. "^[transformR180"
 particles_2.flame.texture_r180 = particles_2.flame.texture .. "^[transformR180"
 particles_2.smoke.texture_r180 = particles_2.smoke.texture .. "^[transformR180"
 particles_2.spark.texture_r180 = particles_2.spark.texture .. "^[transformR180"
+particles_2.trail.texture_r180 = particles_2.trail.texture .. "^[transformR180"
 particles_3.flame.texture_r180 = particles_3.flame.texture .. "^[transformR180"
 particles_3.smoke.texture_r180 = particles_3.smoke.texture .. "^[transformR180"
 particles_3.spark.texture_r180 = particles_3.spark.texture .. "^[transformR180"
+particles_3.trail.texture_r180 = particles_3.trail.texture .. "^[transformR180"
 particles_4.flame.texture_r180 = particles_4.flame.texture .. "^[transformR180"
 particles_4.smoke.texture_r180 = particles_4.smoke.texture .. "^[transformR180"
 particles_4.spark.texture_r180 = particles_4.spark.texture .. "^[transformR180"
-particles_5.flame.texture = "sum_jetpack_particle_spark.png^[transformR45]^sum_jetpack_particle_spark_orange.png"
+particles_4.trail.texture_r180 = particles_4.trail.texture .. "^[transformR180"
+particles_5.flame.texture = "sum_jetpack_particle_spark.png^[transformR90]^sum_jetpack_particle_spark_orange.png"
 
 local exhaust = {
 	dist = 0.6,
@@ -471,6 +503,7 @@ ctg_jetpack.do_particles = function(self, dtime)
 	local ctrl = self._driver:get_player_control()
 	local moving = ctrl.jump or ctrl.up or ctrl.down or ctrl.left or ctrl.right
 	local wind_vel = vector.new()
+	local vel = self._driver:get_velocity()
 	local p = self.object:get_pos()
 	local v = self._driver:get_velocity()
 	local d = self._driver:get_look_dir()
@@ -490,31 +523,61 @@ ctg_jetpack.do_particles = function(self, dtime)
 	elseif self._style == "titanium" then
 		particles = particles_4
 	end
+	--minetest.log("vel y: " .. vel.y)
 	for i=-1,0 do
 		if i == 0 then i = 1 end
 		local yaw = self.object:get_yaw() + (exhaust.yaw * i) + math.pi
 		yaw = minetest.yaw_to_dir(yaw)
 		yaw = vector.multiply(yaw, exhaust.dist)
 		local ex = vector.add(p, yaw)
-		ex.y = ex.y + 1
+		if vel.y < -6 then
+			ex.y = ex.y + 1
+		elseif vel.y < -3 then
+			ex.y = ex.y + 0.5
+		elseif vel.y > 7 then
+			ex.y = ex.y + 2
+		elseif vel.y > 4 then
+			ex.y = ex.y + 1.5
+		else
+			ex.y = ex.y + 1
+		end
 		if particles ~= nil then
 			for _, prt in pairs(particles) do
-				local rx = math.random(-0.01,0.01) * 0.5
-				local rz = math.random(-0.01,0.01) * 0.5
-				local texture = prt.texture 
-				if (math.random() >= 0.6) then texture = prt.texture_r180 end
-				minetest.add_particle({
-					pos = ex,
-					velocity = vector.add(v, vector.add( wind_vel, {x=rx, y= prt.vel * -math.random(0.2*100,0.7*100)/100, z=rz})),
-					minacc = {x = -0.02, y = -0.07, z = -0.02},
-					maxacc = {x = 0.02, y = -0.03, z = 0.02},
-					expirationtime = ((math.random() / 5) + 0.25) * prt.time,
-					size = ((math.random())*4 + 0.1) * prt.size,
-					collisiondetection = prt.cols,
-					vertical = false,
-					texture = texture,
-					glow = prt.glow,
-				})
+				if prt.texture ~= "ctg_jetpack_vapor_cloud.png" and prt.texture ~= "ctg_jetpack_smoke_cloud.png" then
+					local rx = math.random(-0.01,0.01) * 0.5
+					local rz = math.random(-0.01,0.01) * 0.5
+					local texture = prt.texture 
+					if (math.random() >= 0.6) then texture = prt.texture_r180 end
+					minetest.add_particle({
+						pos = ex,
+						velocity = vector.add(v, vector.add( wind_vel, {x=rx, y= prt.vel * -math.random(0.2*100,0.7*100)/100, z=rz})),
+						minacc = {x = -0.02, y = -0.07, z = -0.02},
+						maxacc = {x = 0.02, y = -0.03, z = 0.02},
+						expirationtime = ((math.random() / 5) + 0.25) * prt.time,
+						size = ((math.random())*4 + 0.1) * prt.size,
+						collisiondetection = prt.cols,
+						vertical = false,
+						texture = texture,
+						glow = prt.glow,
+					})
+				elseif math.random() >= 0.6 then
+					local exm = ex
+					exm.y = exm.y - 1.2
+					local rx = math.random(-0.01,0.01) * 0.9
+					local rz = math.random(-0.01,0.01) * 0.9
+					local texture = prt.texture 
+					if (math.random() >= 0.6) then texture = prt.texture_r180 end
+					minetest.add_particle({
+						pos = exm,
+						velocity = vector.add(v, vector.add( wind_vel, {x=rx, y= prt.vel * -math.random(0.2*100,0.7*100)/100, z=rz})),
+						expirationtime = ((math.random() / 5) + 0.25) * prt.time,
+						size = ((math.random())*5 + 0.1) * prt.size,
+						collisiondetection = prt.cols,
+						vertical = false,
+						texture = texture,
+						glow = prt.glow,
+					})
+				end
 			end
 		end
 		
@@ -522,8 +585,8 @@ ctg_jetpack.do_particles = function(self, dtime)
 			texture = particles_5.flame.texture,
 			vel = 45,
 			time = 1.25,
-			size = 0.4,
-			glow = 11,
+			size = 0.5,
+			glow = 13,
 			cols = true
 		}
 		if moving and math.random() >= 0.46 then
@@ -577,9 +640,9 @@ local function generate_from_solar(self, dtime)
 				end
 			end
 			if (has_in_range(pos, "group:torch", 1, 1)) then
-				light = light - 3
+				light = light - 5
 			elseif  (has_in_range(pos, "group:illumination_light", 1, 1)) then
-				light = light - 3
+				light = light - 5
 			elseif  (has_in_range(pos, "technic:lv_lamp", 2, 1)) then
 				light = light - 5
 			end
@@ -596,7 +659,7 @@ local function generate_from_solar(self, dtime)
 					end
 				end
 			end
-			local amt = 10 + (light - 13) * dtime * 0.5
+			local amt = 10 + (light - 10) * dtime * 0.5
 			local update = false
 			if (jetpack ~= nil and light >= 12 and amt >= 5) then
 				for i, stack in ipairs(armor_inv:get_list("armor")) do
@@ -699,7 +762,7 @@ ctg_jetpack.on_step = function(self, dtime)
 		self._press = self._press + dtime
 		return
 	end
-	if self._age > 1 and not self._active and (math.random(0,2) > 0.88) then
+	if self._age > 1 and not self._active and (math.random(0,2) > 0.28) then
 		generate_from_solar(self, dtime)
 	end
 	if self._age < 1000 then self._age = self._age + dtime end
