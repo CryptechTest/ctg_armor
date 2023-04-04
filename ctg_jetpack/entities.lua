@@ -709,7 +709,7 @@ ctg_jetpack.on_step = function(self, dtime)
 	end
 
 	local a = vector.new()
-	local move_mult = move_speed * dtime * 0.88
+	local move_mult = move_speed * dtime * 0.77
 	if self._disabled then move_mult = move_mult / 10 end
 
 	local move_vect = ctg_jetpack.get_movement(self)
