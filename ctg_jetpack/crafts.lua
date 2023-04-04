@@ -1,59 +1,65 @@
 local S = minetest.get_translator(minetest.get_current_modname())
 
 if true then
-  local i = "default:steel_ingot"
-  local s = "default:string"
-	local l = "group:wool"
-	if minetest.get_modpath("mcl_mobitems") then
-		s = "mcl_mobitems:string"
-		l = "mcl_mobitems:leather"
-	end
-  if minetest.get_modpath("mcl_core") then
-    i = "mcl_core:iron_ingot"
-  end
-  local f = "ctg_jetpack:jetpack_fuel"
-	minetest.register_craft({
-		output = "ctg_jetpack:jetpack",
-		recipe = {
-			{l, f, l},
-			{i, s, i},
-			{i, l, i},
-		},
-	})
-end
-
-if true then
+  local t = "tnt:gunpowder"
   local c = "default:coal_lump"
-  if minetest.get_modpath("mcl_core") then
-    c = "mcl_core:coal_lump"
-  end
-
-	local s = "default:coal_lump"
-  if minetest.get_modpath("mcl_mobitems") then
-    s = "mcl_mobitems:slimeball"
-  elseif minetest.get_modpath("tnt") then
-		s = "tnt:gunpowder"
-	end
-
+	local d = "technic:coal_dust"
+  local f = "technic:sulfur_lump"
+  local s = "technic:sulfur_dust"
+  local i = "default:tin_ingot"
+  local w = "group:food_water"
+  local b = "vacuum:air_bottle"
+  local p = "default:paper"
+  local r = "ctg_machines:carbon_dust"
   minetest.register_craft({
-    output = "ctg_jetpack:jetpack_fuel 8",
+    output = "ctg_jetpack:jetpack_fuel_rocket 12",
     recipe = {
-      {"",s,""},
-      {c, c, c},
-      {c, c, c}
+      {"",i,""},
+      {c, t, c},
+      {c, p, c}
     },
   })
-  if minetest.get_modpath("mcl_core") then
-    c = "mcl_core:charcoal_lump"
-    minetest.register_craft({
-      output = "ctg_jetpack:jetpack_fuel 8",
-      recipe = {
-        {s,"", s},
-        {c, c, c},
-        {c, c, c}
-      },
-    })
-  end
+  minetest.register_craft({
+    output = "ctg_jetpack:jetpack_fuel_rocket 16",
+    recipe = {
+      {"",i,""},
+      {f, f, f},
+      {f, p, f}
+    },
+  })
+  minetest.register_craft({
+    output = "ctg_jetpack:jetpack_fuel_rocket 4",
+    recipe = {
+      {d, i, d},
+      {d, t, d},
+      {d, p, d}
+    },
+  })
+  minetest.register_craft({
+    output = "ctg_jetpack:jetpack_fuel_rocket 5",
+    recipe = {
+      {d, i, d},
+      {s, s, s},
+      {d, p, d}
+    },
+  })
+
+  minetest.register_craft({
+    output = "ctg_jetpack:jetpack_fuel_hydrogen 6",
+    recipe = {
+      {d, w, d},
+      {p, b, p},
+      {d, s, d}
+    },
+  })
+  minetest.register_craft({
+    output = "ctg_jetpack:jetpack_fuel_hydrogen 7",
+    recipe = {
+      {"", w, ""},
+      {p,  b,  p},
+      {f,  r,  f}
+    },
+  })
 end
 
 
@@ -70,6 +76,12 @@ minetest.register_craft({
 })
 
 minetest.register_craft({
+  output = "ctg_jetpack:jetpack_bronze",
+  type = "shapeless",
+  recipe = {"ctg_jetpack:jetpack_fuel_rocket","ctg_jetpack:jetpack_bronze"},
+})
+
+minetest.register_craft({
   output = "ctg_jetpack:jetpack_titanium",
   type = "shapeless",
   recipe = {"ctg_jetpack:jetpack_fuel_hydrogen","ctg_jetpack:jetpack_titanium"}
@@ -83,6 +95,7 @@ if true then
   local s = "default:steel_ingot"
   local b = "vessels:steel_bottle"
   local ic = "basic_materials:ic"
+
   minetest.register_craft({
     output = "ctg_jetpack:jetpack_copper",
     recipe = {
@@ -118,4 +131,51 @@ if true then
       {t, "", t},
     },
   })
+  
+  local sp = "technic:solar_panel"
+  local bt = "technic:battery"
+  local cs = "basic_materials:copper_strip"
+  local sw = "technic:doped_silicon_wafer"
+
+  minetest.register_craft({
+    output = "ctg_jetpack:solar_helmet",
+    recipe = {
+      {sp, cs, sp},
+      {bt, sw, bt},
+      {sp, cs, sp},
+    },
+  })
+end
+
+if minetest.get_modpath("unified_inventory") then
+	unified_inventory.register_craft_type("refueling", {
+		description = "Refueling",
+		icon = "ctg_jetpack_iron_item.png",
+		width = 1,
+		height = 1,
+	})
+	unified_inventory.register_craft({
+		type = "refueling",
+		output = "ctg_jetpack:jetpack_titanium",
+		items = {"ctg_jetpack:jetpack_fuel_hydrogen"},
+		width = 0,
+	})
+	unified_inventory.register_craft({
+		type = "refueling",
+		output = "ctg_jetpack:jetpack_iron",
+		items = {"ctg_jetpack:jetpack_fuel_rocket"},
+		width = 0,
+	})
+  unified_inventory.register_craft({
+    type = "refueling",
+    output = "ctg_jetpack:jetpack_bronze",
+    items = {"ctg_jetpack:jetpack_fuel_rocket"},
+    width = 0,
+	})
+  unified_inventory.register_craft({
+    type = "refueling",
+    output = "ctg_jetpack:jetpack_copper",
+    items = {"default:coal_lump", "x_farming:bottle_water"},
+    width = 0,
+	})
 end

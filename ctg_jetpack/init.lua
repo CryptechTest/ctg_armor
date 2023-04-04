@@ -13,7 +13,12 @@ dofile(default_path .. DIR_DELIM .. "hud.lua")
 -- insert new element into 3d_armor. must do this.
 if minetest.global_exists("armor") and armor.elements then
 	table.insert(armor.elements, "jetpack")
+	table.insert(armor.elements, "module")
 end
+
+-- register module addons
+dofile(default_path .. DIR_DELIM .. "solar_helmet.lua")
+
 
 -- =========================================================
 
@@ -58,15 +63,25 @@ end
 --  @damagegrp crumbly 1
 --  @damagegrp level 2
 function ctg_jetpack.register_jetpack(style)
+	local g = ""
+	if style == "copper" then
+		g = 1
+	elseif style == "iron" then
+		g = 2
+	elseif style == "bronze" then
+		g = 5
+	elseif style == "titanium" then
+		g = 9
+	end
 	armor:register_armor("ctg_jetpack:jetpack_" .. style, {
 		description = S( firstToUpper(style) .. " Jetpack"),
 		--_tt_help = S("About 60 seconds of use per fuel"),
 		_doc_items_longdesc = S("Can be used to fly."),
 		inventory_image = "ctg_jetpack_"..style.."_item.png",
-		groups = {armor_jetpack=1, armor_use=1, physics_gravity=-0.07, physics_speed=0.1, metal=1},
-		armor_groups = {fall_damage_add_percent=-0.1},
+		groups = {armor_jetpack=g, armor_use=1, physics_gravity=-0.07, physics_speed=0.1, metal=1},
+		armor_groups = {armor_jetpack=g, fall_damage_add_percent=-0.1},
 		damage_groups = {cracky=3, explody=1, level=2},
-		on_equip = function(user, index, stack)		
+		on_equip = function(user, index, stack)
 			if user:get_attach() ~= nil then return false end
 			if stack:get_wear() > 60100 then return false end
 			if stack:get_wear() >= 60100 and user then 

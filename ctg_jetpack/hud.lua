@@ -1,5 +1,5 @@
 
-local HUD_POSITION = { x = 0.09, y = 0.48 }
+local HUD_POSITION = { x = 0.09, y = 0.485 }
 local OFFSET_LABEL = { x = 0, y = -16 }
 local OFFSET_LEVEL = { x = 0, y = 16}
 local OFFSET_WARNING = { x = 0, y = -34 }
@@ -81,7 +81,9 @@ local get_color = function(r,g,b)
 	return b + (g * 256) + (r * 256 * 256)
 end
 
-local update_hud = function(player, has_fuel, is_running, armor_list)
+local last_fuel_value = math.floor(1)
+
+local update_hud = function(player, has_fuel, is_running, armor_list, clear)
 	local playername = player:get_player_name()
 	local hud_data = hud[playername]
 
@@ -89,13 +91,9 @@ local update_hud = function(player, has_fuel, is_running, armor_list)
 		return
 	end
 
-    if is_running then
-        player:hud_change(hud_data.status_message, "text", "Jetpack active!")
-    elseif not has_fuel then
-		player:hud_change(hud_data.status_message, "text", "Jetpack is out of fuel!")
-	else
-		player:hud_change(hud_data.status_message, "text", "")
-	end
+    if clear then
+        last_fuel_value = 1
+    end
 
 	local max_wear = 0
 	for _,item in pairs(armor_list) do
@@ -111,9 +109,26 @@ local update_hud = function(player, has_fuel, is_running, armor_list)
 	end
 
 	local factor_full = 1 - (max_wear / 60100)
+    local prcnt_full = math.floor(factor_full * 10000) * 0.01;
+    
+    if is_running then
+        player:hud_change(hud_data.status_message, "text", "Jetpack active!")
+        player:hud_change(hud_data.status_message, "number", get_color(252, 181, 3))
+    elseif not has_fuel then
+		player:hud_change(hud_data.status_message, "text", "Jetpack is out of fuel!")
+        player:hud_change(hud_data.status_message, "number", get_color(255, 0, 0))
+    elseif last_fuel_value + 0.00001 < factor_full then
+        player:hud_change(hud_data.status_message, "text", "Solar charger active!")
+        player:hud_change(hud_data.status_message, "number", get_color(3, 252, 115))
+    else
+		player:hud_change(hud_data.status_message, "text", "")
+        player:hud_change(hud_data.status_message, "number", get_color(255,0,0))
+	end
 
-	player:hud_change(hud_data.fuel_level, "text", math.floor(factor_full * 1000) * 0.1 .. "%")
+	player:hud_change(hud_data.fuel_level, "text", prcnt_full .. "%")
 	player:hud_change(hud_data.fuel_fg, "scale", { x = factor_full * -7, y = 1 })
+    
+    last_fuel_value = factor_full
 
 	local color
 
@@ -150,7 +165,12 @@ minetest.register_on_leaveplayer(function(player)
 	hud[playername] = nil
 end)
 
+
 ctg_jetpack.set_player_wearing = function(player, has_jetpack, has_fuel, is_active, armor_list, armor_inv)
+    return set_player_wearing(player, has_jetpack, has_fuel, is_active, armor_list, armor_inv, false)
+end
+
+ctg_jetpack.set_player_wearing = function(player, has_jetpack, has_fuel, is_active, armor_list, armor_inv, clear)
 	local playername = player:get_player_name()
 	local hud_data = hud[playername]
 
@@ -159,7 +179,11 @@ ctg_jetpack.set_player_wearing = function(player, has_jetpack, has_fuel, is_acti
 
 	if hud_data and has_jetpack and has_helmet then
 		-- player wears it
-		update_hud(player, has_fuel, is_active, armor_list)
+		update_hud(player, has_fuel, is_active, armor_list, clear)
+
+    elseif hud_data and has_jetpack and clear then
+        -- player wears it
+        update_hud(player, has_fuel, is_active, armor_list, clear)
 
 	elseif hud_data and not has_jetpack then
 		-- player stopped wearing
@@ -173,7 +197,7 @@ ctg_jetpack.set_player_wearing = function(player, has_jetpack, has_fuel, is_acti
 		-- player started wearing
 		setup_hud(player)
 		minetest.after(0.1, function()
-			update_hud(player, has_fuel, is_active, armor_list)
+			update_hud(player, has_fuel, is_active, armor_list, clear)
 		end)
 
 	end
