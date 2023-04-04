@@ -282,9 +282,9 @@ ctg_jetpack.get_movement = function(self)
 	local mod = self._speed
 	local dir = self._driver:get_look_dir()
 	if (cur_y < 4000) then
-		dir.y = math.max(0, self._driver:get_velocity().y * 0.65)
+		dir.y = math.max(0.1, self._driver:get_velocity().y * 0.25)
 	else
-		dir.y = math.max(0, self._driver:get_velocity().y * 0.70)
+		dir.y = math.max(0.01, self._driver:get_velocity().y * 0.50)
 	end
 	dir = vector.normalize(dir)
 
@@ -305,12 +305,12 @@ ctg_jetpack.get_movement = function(self)
 	if ctrl.jump then
 		up = 1.37 * mod
 		if (cur_y < 4000) then
-			up = 6.4 * mod
+			up = 4.6 * mod
 		end
 	elseif ctrl.aux1 then
 		up = -1 * mod
 		if (cur_y < 4000) then
-			up = -6 * mod
+			up = -3 * mod
 		end
 	end
 	if ctrl.left then
@@ -341,8 +341,8 @@ ctg_jetpack.get_movement = function(self)
 	local hzm = 6
 	local vzm = 5
 	if cur_y < 4000 then
-		vzm = 4.6
-		hzm = 4.5
+		vzm = 4.5
+		hzm = 4.2
 	end
 	if vf.y > vzm then vf.y = vzm end
 	if vf.y < -0.2 then vf.y = -0.2 end
@@ -475,6 +475,7 @@ ctg_jetpack.do_particles = function(self, dtime)
 	local v = self._driver:get_velocity()
 	local d = self._driver:get_look_dir()
 	v = vector.multiply(v, vector.normalize(d))
+	v = vector.normalize(v)
 	local sum_air_currents = minetest.get_modpath("sum_air_currents") ~= nil
 	if sum_air_currents then
 		sum_air_currents.get_wind(p)
@@ -542,7 +543,7 @@ ctg_jetpack.do_particles = function(self, dtime)
 	end
 end
 
-local move_speed = 25
+local move_speed = 22
 ctg_jetpack.max_use_time = 30
 ctg_jetpack.wear_per_sec = 60100 / ctg_jetpack.max_use_time
 -- warn the player 5 sec before fuel runs out
@@ -584,7 +585,8 @@ ctg_jetpack.on_step = function(self, dtime)
 		end
 	end
 	if self._age > 1 and jump and not self._active then
-		if self._press > 0.320 then
+		local wear = self._itemstack:get_wear()
+		if self._press > 0.320 and wear and wear < 60000 then
 			if (self._driver and self._driver:get_hp() <= 0) then
 				self.object:remove()
 				return
@@ -634,6 +636,7 @@ ctg_jetpack.on_step = function(self, dtime)
 						if (self._fuel > 0) then
 							local warn_sound = minetest.sound_play("sum_jetpack_warn", {gain = 0.3, pitch = 0.5, object = self.object})
 						end
+						self._itemstack = ItemStack(stack)
 						ctg_jetpack.set_player_wearing(player, true, false, false, armor_list, armor_inv)
 						self._fuel = 0
 						self._active = false
@@ -706,7 +709,7 @@ ctg_jetpack.on_step = function(self, dtime)
 	end
 
 	local a = vector.new()
-	local move_mult = move_speed * dtime * 0.4
+	local move_mult = move_speed * dtime
 	if self._disabled then move_mult = move_mult / 10 end
 
 	local move_vect = ctg_jetpack.get_movement(self)
@@ -714,7 +717,7 @@ ctg_jetpack.on_step = function(self, dtime)
 
 	local sum_air_currents = minetest.get_modpath("sum_air_currents") ~= nil
 	if sum_air_currents and sum_air_currents.get_wind ~= nil then
-		a = vector.add(a, vector.multiply(sum_air_currents.get_wind(p), dtime * 0.1 * 0.4))
+		a = vector.add(a, vector.multiply(sum_air_currents.get_wind(p), dtime * 0.1))
 	end
 
 	local cur_y = self._driver:get_pos().y
