@@ -753,7 +753,7 @@ ctg_jetpack.on_step = function(self, dtime)
 			self._active = true
 			self._press = 0
 			self._age = 1
-			minetest.sound_play("sum_jetpack_flame", {
+			minetest.sound_play("sum_jetpack_flame_start", {
 				gain = 0.45,
 				object = self.object,
 			})
