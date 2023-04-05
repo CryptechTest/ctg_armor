@@ -653,7 +653,7 @@ local function generate_from_solar(self, dtime)
 					local name = stack:get_name()
 					local jp = player:get_armor_groups(name, "jetpack")
 					local ig = minetest.get_item_group(name, "armor_jetpack")
-					if jp ~= nil and ig ~= null and ig >= 9 then
+					if jp ~= nil and ig ~= nil and ig >= 9 then
 						jetpack = stack
 						index = i
 						break
