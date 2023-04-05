@@ -145,8 +145,7 @@ minetest.register_on_leaveplayer(function(player)
 	local playername = player:get_player_name()
 	if (jetpacks[playername] ~= nil) then
 		local jetpack = jetpacks[playername].jetpack
-		local ent = jetpack.object:get_luaentity()
-		ctg_jetpack.detach_object(ent, true)
+		ctg_jetpack.detach_object(jetpack, true)
 	end
 end)
 
@@ -157,8 +156,7 @@ minetest.register_on_shutdown(function()
 		local playername = player:get_player_name()
 		if (jetpacks[playername] ~= nil) then
 			local jetpack = jetpacks[playername].jetpack
-			local ent = jetpack.object:get_luaentity()
-			ctg_jetpack.detach_object(ent, true)
+			ctg_jetpack.detach_object(jetpack, true)
 		end
 	end
 end)
