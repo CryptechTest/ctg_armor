@@ -628,6 +628,9 @@ local function generate_from_solar(self, dtime)
 			local light = 0
 			if (_time > 0)  then
 				light = minetest.get_node_light(pos, _time / 24000)
+				if light == nil then
+					light = 0
+				end
 				if (light < 12) then
 					--minetest.log("Not enough light! " .. light)
 					if self._generating then
@@ -699,17 +702,17 @@ ctg_jetpack.wear_warn_level = (ctg_jetpack.max_use_time - 5) * ctg_jetpack.wear_
 
 function ctg_jetpack.setup(style)
 	if style == "copper" then
-		ctg_jetpack.max_use_time = 60
+		ctg_jetpack.max_use_time = 70
 	elseif style == "iron" then
 		ctg_jetpack.max_use_time = 90
 	elseif style == "bronze" then
 		ctg_jetpack.max_use_time = 110
 	elseif style == "titanium" then
-		ctg_jetpack.max_use_time = 140
+		ctg_jetpack.max_use_time = 150
 	end	
 	ctg_jetpack.wear_per_sec = 60100 / ctg_jetpack.max_use_time
-	-- warn the player 5 sec before fuel runs out
-	ctg_jetpack.wear_warn_level = (ctg_jetpack.max_use_time - 5) * ctg_jetpack.wear_per_sec
+	-- warn the player a few sec before fuel runs out
+	ctg_jetpack.wear_warn_level = (ctg_jetpack.max_use_time - 10) * ctg_jetpack.wear_per_sec
 end
 
 ctg_jetpack.on_step = function(self, dtime)
@@ -872,8 +875,8 @@ ctg_jetpack.on_step = function(self, dtime)
 	end
 
 	local a = vector.new()
-	local move_mult = math.min(25, move_speed * math.min(2, dtime) * 0.7 + 0.001)
-	if self._disabled then move_mult = move_mult / 10 end
+	local move_mult = math.min(20, move_speed * math.min(2, dtime) * 0.67 + 0.001)
+	--if self._disabled then move_mult = move_mult / 10 end
 
 	local move_vect = ctg_jetpack.get_movement(self)
 	a = vector.multiply(move_vect, move_mult)
@@ -886,9 +889,9 @@ ctg_jetpack.on_step = function(self, dtime)
 	local cur_y = self._driver:get_pos().y
 	local vel = self._driver:get_velocity()
 	if cur_y > 4000 then
-		vel = vector.multiply(vel, -0.0927)
+		vel = vector.multiply(vel, -0.0667)
 	else
-		vel = vector.multiply(vel, -0.0921)
+		vel = vector.multiply(vel, -0.0888)
 	end
 	if vel.y > 0 then
 		if cur_y > 4000 then

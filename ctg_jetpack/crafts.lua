@@ -12,7 +12,7 @@ if true then
   local p = "default:paper"
   local r = "ctg_machines:carbon_dust"
   minetest.register_craft({
-    output = "ctg_jetpack:jetpack_fuel_rocket 12",
+    output = "ctg_jetpack:jetpack_fuel_rocket 6",
     recipe = {
       {"",i,""},
       {c, t, c},
@@ -20,7 +20,7 @@ if true then
     },
   })
   minetest.register_craft({
-    output = "ctg_jetpack:jetpack_fuel_rocket 16",
+    output = "ctg_jetpack:jetpack_fuel_rocket 8",
     recipe = {
       {"",i,""},
       {f, f, f},
@@ -28,7 +28,7 @@ if true then
     },
   })
   minetest.register_craft({
-    output = "ctg_jetpack:jetpack_fuel_rocket 4",
+    output = "ctg_jetpack:jetpack_fuel_rocket 2",
     recipe = {
       {d, i, d},
       {d, t, d},
@@ -36,7 +36,7 @@ if true then
     },
   })
   minetest.register_craft({
-    output = "ctg_jetpack:jetpack_fuel_rocket 5",
+    output = "ctg_jetpack:jetpack_fuel_rocket 3",
     recipe = {
       {d, i, d},
       {s, s, s},
@@ -45,7 +45,7 @@ if true then
   })
 
   minetest.register_craft({
-    output = "ctg_jetpack:jetpack_fuel_hydrogen 4",
+    output = "ctg_jetpack:jetpack_fuel_hydrogen 3",
     recipe = {
       {d, w, d},
       {p, b, p},
@@ -53,7 +53,7 @@ if true then
     },
   })
   minetest.register_craft({
-    output = "ctg_jetpack:jetpack_fuel_hydrogen 5",
+    output = "ctg_jetpack:jetpack_fuel_hydrogen 4",
     recipe = {
       {"", w, ""},
       {p,  b,  p},
