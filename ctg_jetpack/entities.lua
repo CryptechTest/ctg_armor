@@ -314,14 +314,14 @@ ctg_jetpack.get_movement = function(self)
 		end
 	end
 	if ctrl.left then
-		right = -2 * mod
+		right = -0.5 * mod
 		if (cur_y < 4000) then
-			right = -3.4 * mod
+			right = -0.5 * mod
 		end
 	elseif ctrl.right then
-		right = 2 * mod
+		right = 0.5 * mod
 		if (cur_y < 4000) then
-			right = 3.4 * mod
+			right = 0.5 * mod
 		end
 	end
 
@@ -751,6 +751,7 @@ ctg_jetpack.on_step = function(self, dtime)
 			self.object:set_properties({
 				physical = true
 			})
+			self._disabled = false
 			self._active = true
 			self._press = 0
 			self._age = 1
@@ -803,6 +804,7 @@ ctg_jetpack.on_step = function(self, dtime)
 						ctg_jetpack.set_player_wearing(player, true, false, false, armor_list, armor_inv)
 						self._fuel = 0
 						self._active = false
+						self._disabled = true
 						return false
 					end
 				end
@@ -872,7 +874,7 @@ ctg_jetpack.on_step = function(self, dtime)
 	end
 
 	local a = vector.new()
-	local move_mult = move_speed * dtime * 0.7
+	local move_mult = math.min(30, move_speed * math.min(2, dtime) * 0.95 + 0.001)
 	if self._disabled then move_mult = move_mult / 10 end
 
 	local move_vect = ctg_jetpack.get_movement(self)
