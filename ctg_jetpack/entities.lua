@@ -280,7 +280,7 @@ ctg_jetpack.get_movement = function(self)
 	local mod = self._speed
 	local dir = self._driver:get_look_dir()
 	if (cur_y < 4000) then
-		dir.y = math.max(0.1, self._driver:get_velocity().y * 0.27)
+		dir.y = math.max(0.1, self._driver:get_velocity().y * 0.30)
 	else
 		dir.y = math.max(0.01, self._driver:get_velocity().y * 0.50)
 	end
@@ -785,9 +785,9 @@ ctg_jetpack.on_step = function(self, dtime)
 						if jump then
 							armor:damage(player, i, stack, ctg_jetpack.wear_per_sec * dtime * 6.0)
 						elseif move then
-							armor:damage(player, i, stack, ctg_jetpack.wear_per_sec * dtime * 4.0)
+							armor:damage(player, i, stack, ctg_jetpack.wear_per_sec * dtime * 3.0)
 						else
-							armor:damage(player, i, stack, ctg_jetpack.wear_per_sec * dtime * 2.0)
+							armor:damage(player, i, stack, ctg_jetpack.wear_per_sec * dtime * 1.6)
 						end
 						--self._itemstack = ItemStack(stack)
 						self._itemstack = stack
