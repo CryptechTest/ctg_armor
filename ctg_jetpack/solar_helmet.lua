@@ -6,7 +6,7 @@ armor:register_armor("ctg_jetpack:solar_helmet", {
     _tt_help = S("Supplemental solar charger"),
     _doc_items_longdesc = S("Can be used to refuel."),
     inventory_image = "ctg_jetpack_solar_helmet_item.png",
-    groups = { armor_module=3, physics_gravity=0.01, physics_speed=-0.02, metal=1 },
+    groups = { armor_module=3, physics_gravity=0.01, physics_speed=-0.02, metal=1, not_repaired_by_anvil=1},
     armor_groups = { armor_module=3 },
     damage_groups = {cracky=3, explody=1, level=2},
     on_equip = function(user, index, stack)

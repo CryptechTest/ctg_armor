@@ -662,7 +662,7 @@ local function generate_from_solar(self, dtime)
 			end
 			local amt = 10 + (light - 10) * dtime * 0.5
 			local update = false
-			if (jetpack ~= nil and light >= 12 and amt >= 5) then
+			if (jetpack ~= nil and light >= 12 and amt >= 5 and jetpack:get_wear() < 60100) then
 				for i, stack in ipairs(armor_inv:get_list("armor")) do
 					if not stack:is_empty() then
 						local name = stack:get_name()

@@ -78,7 +78,7 @@ function ctg_jetpack.register_jetpack(style)
 		--_tt_help = S("About 60 seconds of use per fuel"),
 		_doc_items_longdesc = S("Can be used to fly."),
 		inventory_image = "ctg_jetpack_"..style.."_item.png",
-		groups = {armor_jetpack=g, armor_use=1, physics_gravity=-0.07, physics_speed=0.1, metal=1},
+		groups = {armor_jetpack=g, armor_use=1, physics_gravity=-0.07, physics_speed=0.1, metal=1, not_repaired_by_anvil=1},
 		armor_groups = {armor_jetpack=g, fall_damage_add_percent=-0.1},
 		damage_groups = {cracky=3, explody=1, level=2},
 		on_equip = function(user, index, stack)
