@@ -1,5 +1,5 @@
-# textdomain: armor_steel
-Steel Helmet=
-Steel Chestplate=
-Steel Leggings=
-Steel Boots=
+# textdomain: armor_lead
+Lead Helmet=
+Lead Chestplate=
+Lead Leggings=
+Lead Boots=

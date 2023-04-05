@@ -174,8 +174,10 @@ ctg_jetpack.set_player_wearing = function(player, has_jetpack, has_fuel, is_acti
 	local playername = player:get_player_name()
 	local hud_data = hud[playername]
 
-    local has_helmet = armor_inv and (armor_inv:contains_item("armor", "spacesuit:helmet_base") 
-                                    or armor_inv:contains_item("armor", "spacesuit:helmet"))
+    local has_helmet = armor_inv and (armor_inv:contains_item("armor", "spacesuit:helmet_base")
+                                    or armor_inv:contains_item("armor", "spacesuit:helmet")
+                                    or armor_inv:contains_item("armor", "ctg_spacesuit:helmet_titanium")
+                                    or armor_inv:contains_item("armor", "ctg_spacesuit:helmet_gold"))
 
 	if hud_data and has_jetpack and has_helmet then
 		-- player wears it
