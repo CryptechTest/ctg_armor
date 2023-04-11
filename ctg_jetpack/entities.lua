@@ -139,11 +139,13 @@ minetest.register_on_joinplayer(function(player)
             local parachute = obj
             if (parachute ~= nil) then
                 local ent = parachute:get_luaentity()
-                ent.object:set_properties({
-                    physical = false
-                })
-                ctg_jetpack.detach_object(ent, true)
-                return true
+                if ent._jetpack ~= nil then
+                    ent.object:set_properties({
+                        physical = false
+                    })
+                    ctg_jetpack.detach_object(ent, true)
+                    return true
+                end
             end
         end
     end
@@ -993,7 +995,7 @@ ctg_jetpack.on_step = function(self, dtime)
     if cur_y > 4000 then
         vel = vector.multiply(vel, -0.0667)
     else
-        vel = vector.multiply(vel, -0.0888)
+        vel = vector.multiply(vel, -0.0977)
     end
     if vel.y > 0 then
         if cur_y > 4000 then
@@ -1038,6 +1040,7 @@ local function register_jetpack_entity(style, speed)
         _fuel = ctg_jetpack.max_use_time,
         _speed = speed,
         _generating = false,
+        _jetpack = 1,
 
         _lastpos = {}
     }
