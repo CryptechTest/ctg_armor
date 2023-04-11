@@ -177,7 +177,7 @@ ctg_jetpack.detach_object = function(self, clear_jetpack)
     self.object:set_detach()
     self.object:remove()
     if clear_jetpack and self._driver then
-        ctg_jetpack.set_player_wearing(self._driver, false, false, false, nil, nil)
+        ctg_jetpack.set_player_wearing(self._driver, false, false, false, false, nil, nil)
         remove_jetpack(self._driver)
     end
     -- minetest.log('detach_object...')
@@ -707,6 +707,9 @@ local function generate_from_solar(self, dtime)
         if wear == 0 then
             return
         end
+        if (math.random(0, 5) == 0) then
+            return
+        end
         if self._driver and self._driver:is_player() then
             local player = self._driver
             local _, armor_inv = armor.get_valid_player(armor, player, "[jetpack]")
@@ -723,7 +726,7 @@ local function generate_from_solar(self, dtime)
                 if (light < 12) then
                     -- minetest.log("Not enough light! " .. light)
                     if self._generating then
-                        ctg_jetpack.set_player_wearing(player, true, true, false, armor_list, armor_inv, true)
+                        ctg_jetpack.set_player_wearing(player, true, true, false, false, armor_list, armor_inv, true)
                         self._generating = false
                     end
                     return false
@@ -749,7 +752,7 @@ local function generate_from_solar(self, dtime)
                     end
                 end
             end
-            local amt = 10 + (light - 10) * dtime * 0.5
+            local amt = 10 + (light - 10) * dtime * 1
             local update = false
             if (jetpack ~= nil and light >= 12 and amt >= 5 and jetpack:get_wear() < 60100) then
                 for i, stack in ipairs(armor_inv:get_list("armor")) do
@@ -773,9 +776,9 @@ local function generate_from_solar(self, dtime)
                 end
             end
             if (update) then
-                ctg_jetpack.set_player_wearing(player, true, true, false, armor_list, armor_inv)
+                ctg_jetpack.set_player_wearing(player, true, true, false, self._generating, armor_list, armor_inv)
             elseif self._generating then
-                ctg_jetpack.set_player_wearing(player, true, true, false, armor_list, armor_inv, true)
+                ctg_jetpack.set_player_wearing2(player, true, true, false, false, armor_list, armor_inv, true)
                 self._generating = false
             end
             return true
@@ -853,7 +856,7 @@ ctg_jetpack.on_step = function(self, dtime)
         self._press = self._press + dtime
         return
     end
-    if self._age > 1 and not self._active and (math.random(0, 2) > 0.28) then
+    if self._age > 1 and not self._active then
         generate_from_solar(self, dtime)
     end
     if self._age < 1000 then
@@ -881,7 +884,7 @@ ctg_jetpack.on_step = function(self, dtime)
                     wear = stack:get_wear()
                     if name:sub(1, 20) == "ctg_jetpack:jetpack_" and wear + ctg_jetpack.wear_per_sec * dtime < 60100 then
                         -- if addon_jetpack ~= nil and wear + ctg_jetpack.wear_per_sec * dtime < 60100 then
-                        ctg_jetpack.set_player_wearing(player, true, true, true, armor_list, armor_inv)
+                        ctg_jetpack.set_player_wearing(player, true, true, true, self._generating, armor_list, armor_inv)
                         if jump then
                             armor:damage(player, i, stack, ctg_jetpack.wear_per_sec * dtime * 6.0)
                         elseif move then
@@ -903,7 +906,8 @@ ctg_jetpack.on_step = function(self, dtime)
                         end
                         -- self._itemstack = ItemStack(stack)
                         self._itemstack = stack
-                        ctg_jetpack.set_player_wearing(player, true, false, false, armor_list, armor_inv)
+                        ctg_jetpack.set_player_wearing(player, true, false, false, self._generating, armor_list,
+                            armor_inv)
                         self._fuel = 0
                         self._active = false
                         self._disabled = true
@@ -967,7 +971,8 @@ ctg_jetpack.on_step = function(self, dtime)
                 local name = stack:get_name()
                 local wear = stack:get_wear()
                 if name:sub(1, 12) == "ctg_jetpack:" then
-                    ctg_jetpack.set_player_wearing(self._driver, true, wear < 60100, false, armor_list, armor_inv)
+                    ctg_jetpack.set_player_wearing(self._driver, true, wear < 60100, false, self._generating,
+                        armor_list, armor_inv)
                 end
             end
         end
