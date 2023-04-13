@@ -11,6 +11,7 @@ if true then
     local b = "vacuum:air_bottle"
     local p = "default:paper"
     local r = "ctg_machines:carbon_dust"
+    local h = "ctg_machines:hydrogen_bottle"
     minetest.register_craft({
         output = "ctg_jetpack:jetpack_fuel_rocket 6",
         recipe = {{"", i, ""}, {c, t, c}, {c, p, c}}
@@ -29,12 +30,12 @@ if true then
     })
 
     minetest.register_craft({
-        output = "ctg_jetpack:jetpack_fuel_hydrogen 3",
+        output = "ctg_jetpack:jetpack_fuel_hydrogen 1",
         recipe = {{d, w, d}, {p, b, p}, {d, s, d}}
     })
     minetest.register_craft({
         output = "ctg_jetpack:jetpack_fuel_hydrogen 4",
-        recipe = {{"", w, ""}, {p, b, p}, {f, r, f}}
+        recipe = {{"", p, ""}, {"", h, ""}, {"", r, ""}}
     })
 end
 
