@@ -294,11 +294,13 @@ ctg_jetpack.get_movement = function(self)
     local mod = self._speed
     local dir = self._driver:get_look_dir()
     if (cur_y < 4000) then
-        dir.y = math.max(0.1, self._driver:get_velocity().y * 0.30)
+        --dir.y = math.max(0.1, self._driver:get_velocity().y * 0.30)
+        dir = vector.normalize(vector.add(dir, vector.multiply(dir, 0.3)))
     else
-        dir.y = math.max(0.01, self._driver:get_velocity().y * 0.50)
+        --dir.y = math.max(0.01, self._driver:get_velocity().y * 0.50)
+        dir = vector.normalize(vector.add(dir, vector.multiply(dir, 0.5)))
     end
-    dir = vector.normalize(dir)
+
 
     local forward = 0
     local up = 0
@@ -317,7 +319,7 @@ ctg_jetpack.get_movement = function(self)
     if ctrl.jump then
         up = 1.37 * mod
         if (cur_y < 4000) then
-            up = 4.28 * mod
+            up = 7.0 * mod
         end
     elseif ctrl.aux1 then
         up = -1 * mod
@@ -359,8 +361,8 @@ ctg_jetpack.get_movement = function(self)
     if vf.y > vzm then
         vf.y = vzm
     end
-    if vf.y < -0.2 then
-        vf.y = -0.2
+    if vf.y < -1.5 then
+        vf.y = -1.5
     end
     if vf.x > hzm then
         vf.x = hzm
@@ -694,7 +696,7 @@ local function has_in_range(p, c_name, rng, thres)
     }
     local pos1 = vector.subtract(pos, range)
     local pos2 = vector.add(pos, range)
-    local nodes = minetest.find_nodes_in_area(pos1, pos2, {c_name})
+    local nodes = minetest.find_nodes_in_area(pos1, pos2, { c_name })
     return #nodes >= thres
 end
 
@@ -886,11 +888,11 @@ ctg_jetpack.on_step = function(self, dtime)
                         -- if addon_jetpack ~= nil and wear + ctg_jetpack.wear_per_sec * dtime < 60100 then
                         ctg_jetpack.set_player_wearing(player, true, true, true, self._generating, armor_list, armor_inv)
                         if jump then
-                            armor:damage(player, i, stack, ctg_jetpack.wear_per_sec * dtime * 6.0)
+                            armor:damage(player, i, stack, (ctg_jetpack.wear_per_sec * dtime / 2) * 6.0)
                         elseif move then
-                            armor:damage(player, i, stack, ctg_jetpack.wear_per_sec * dtime * 3.0)
+                            armor:damage(player, i, stack, (ctg_jetpack.wear_per_sec * dtime / 2) * 3.0)
                         else
-                            armor:damage(player, i, stack, ctg_jetpack.wear_per_sec * dtime * 1.6)
+                            armor:damage(player, i, stack, (ctg_jetpack.wear_per_sec * dtime / 2) * 1.6)
                         end
                         -- self._itemstack = ItemStack(stack)
                         self._itemstack = stack
@@ -1020,15 +1022,14 @@ local function register_jetpack_entity(style, speed)
         timer = 0,
         visual = "mesh",
         mesh = "sum_jetpack.b3d",
-        textures = {"ctg_jetpack_" .. style .. "_texture.png"},
+        textures = { "ctg_jetpack_" .. style .. "_texture.png" },
         visual_size = {
             x = 1,
             y = 1,
             z = 1
         },
-        collisionbox = {-cbsize, -0, -cbsize, cbsize, cbsize * 6, cbsize},
+        collisionbox = { -cbsize, -0, -cbsize, cbsize, cbsize * 6, cbsize },
         pointable = false,
-
         get_staticdata = ctg_jetpack.get_staticdata,
         on_activate = ctg_jetpack.on_activate,
         on_step = ctg_jetpack.on_step,
@@ -1046,7 +1047,6 @@ local function register_jetpack_entity(style, speed)
         _speed = speed,
         _generating = false,
         _jetpack = 1,
-
         _lastpos = {}
     }
 
