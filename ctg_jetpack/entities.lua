@@ -584,12 +584,12 @@ ctg_jetpack.do_particles = function(self, dtime)
         yaw = vector.multiply(yaw, exhaust.dist)
         local ex = vector.add(p, yaw)
         if vel.y < -6 then
-            ex.y = ex.y + 1
+            ex.y = ex.y + 0.25
         elseif vel.y < -3 then
             ex.y = ex.y + 0.5
-        elseif vel.y > 7 then
+        elseif vel.y > 9 then
             ex.y = ex.y + 2
-        elseif vel.y > 4 then
+        elseif vel.y > 5 then
             ex.y = ex.y + 1.5
         else
             ex.y = ex.y + 1
