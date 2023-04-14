@@ -140,7 +140,7 @@ minetest.register_on_joinplayer(function(player)
             local parachute = obj
             if (parachute ~= nil) then
                 local ent = parachute:get_luaentity()
-                if ent._jetpack ~= nil then
+                if ent and ent._jetpack ~= nil then
                     ent.object:set_properties({
                         physical = false
                     })
