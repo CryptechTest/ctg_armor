@@ -361,8 +361,8 @@ ctg_jetpack.get_movement = function(self)
     if vf.y > vzm then
         vf.y = vzm
     end
-    if vf.y < -1.5 then
-        vf.y = -1.5
+    if vf.y < -1.05 then
+        vf.y = -1.05
     end
     if vf.x > hzm then
         vf.x = hzm
@@ -894,7 +894,7 @@ ctg_jetpack.on_step = function(self, dtime)
                         elseif move then
                             armor:damage(player, i, stack, (ctg_jetpack.wear_per_sec * dtime) * 1.5)
                         else
-                            armor:damage(player, i, stack, (ctg_jetpack.wear_per_sec * dtime) * 0.8)
+                            armor:damage(player, i, stack, (ctg_jetpack.wear_per_sec * dtime) * 0.5)
                         end
                         self._itemstack = stack
                         break
