@@ -125,11 +125,12 @@ minetest.register_on_joinplayer(function(player)
         end
         v = vector.multiply(v, 2)
         if player then
-            minetest.after(0.2, function(vel, driver)
-                player:add_velocity(vel)
-            end, v, player)
+            -- minetest.after(0.2, function(vel, driver)
+            --    player:add_velocity(vel)
+            -- end, v, player)
             minetest.after(0.5, function(vel, driver)
-                player:add_velocity(vel)
+                -- player:add_velocity(vel)
+                player:set_velocity({0, 0, 0})
             end, v, player)
         end
     end
@@ -817,6 +818,7 @@ ctg_jetpack.on_step = function(self, dtime)
         return
     end
     if (self._age > 1 and self._driver:get_hp() <= 0) then
+        self._driver:set_velocity({0, 0, 0})
         ctg_jetpack.detach_object(self, true)
         return
     end
@@ -851,7 +853,7 @@ ctg_jetpack.on_step = function(self, dtime)
             self._press = 0
             self._age = 1
             minetest.sound_play("sum_jetpack_flame_start", {
-                gain = 0.2,
+                gain = 0.3,
                 object = self.object
             })
         end
@@ -1031,6 +1033,13 @@ local function register_jetpack_entity(style, speed)
         get_staticdata = ctg_jetpack.get_staticdata,
         on_activate = ctg_jetpack.on_activate,
         on_step = ctg_jetpack.on_step,
+        groups = {
+            immortal = 1
+        },
+        armor_groups = {
+            immortal = 1
+        },
+        immortal = 1,
         _style = style,
         _thrower = nil,
         _driver = nil,
