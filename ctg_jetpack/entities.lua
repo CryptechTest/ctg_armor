@@ -308,7 +308,7 @@ ctg_jetpack.get_movement = function(self)
     if ctrl.up then
         forward = 3 * mod
         if (cur_y < 4000) then
-            forward = 4.08 * mod
+            forward = 4.28 * mod
         end
     elseif ctrl.down then
         forward = -0.5 * mod
@@ -319,7 +319,7 @@ ctg_jetpack.get_movement = function(self)
     if ctrl.jump then
         up = 1.37 * mod
         if (cur_y < 4000) then
-            up = 7.0 * mod
+            up = 5.0 * mod
         end
     elseif ctrl.aux1 then
         up = -1 * mod
@@ -356,7 +356,7 @@ ctg_jetpack.get_movement = function(self)
     local vzm = 3.8
     if cur_y < 4000 then
         vzm = 4.0
-        hzm = 3.7
+        hzm = 3.8
     end
     if vf.y > vzm then
         vf.y = vzm
@@ -709,7 +709,7 @@ local function generate_from_solar(self, dtime)
         if wear == 0 then
             return
         end
-        if (math.random(0, 5) == 0) then
+        if (math.random(0, 10) == 0) then
             return
         end
         if self._driver and self._driver:is_player() then
@@ -754,7 +754,7 @@ local function generate_from_solar(self, dtime)
                     end
                 end
             end
-            local amt = 10 + (light - 10) * dtime * 2
+            local amt = 10 + (light - 10) * dtime * 2.5
             local update = false
             if (jetpack ~= nil and light >= 12 and amt >= 5 and jetpack:get_wear() < 60100) then
                 for i, stack in ipairs(armor_inv:get_list("armor")) do
@@ -837,7 +837,7 @@ ctg_jetpack.on_step = function(self, dtime)
     end
     if self._age > 1 and jump and not self._active then
         local wear = self._itemstack:get_wear()
-        if self._press > 0.320 and wear and wear < 60000 then
+        if self._press > 0.300 and wear and wear < 60000 then
             if (self._driver and self._driver:get_hp() <= 0) then
                 self.object:remove()
                 return
@@ -890,11 +890,11 @@ ctg_jetpack.on_step = function(self, dtime)
                         -- if addon_jetpack ~= nil and wear + ctg_jetpack.wear_per_sec * dtime < 60100 then
                         ctg_jetpack.set_player_wearing(player, true, true, true, self._generating, armor_list, armor_inv)
                         if jump then
-                            armor:damage(player, i, stack, (ctg_jetpack.wear_per_sec * dtime / 2) * 6.0)
+                            armor:damage(player, i, stack, (ctg_jetpack.wear_per_sec * dtime) * 4.0)
                         elseif move then
-                            armor:damage(player, i, stack, (ctg_jetpack.wear_per_sec * dtime / 2) * 3.0)
+                            armor:damage(player, i, stack, (ctg_jetpack.wear_per_sec * dtime) * 1.5)
                         else
-                            armor:damage(player, i, stack, (ctg_jetpack.wear_per_sec * dtime / 2) * 1.5)
+                            armor:damage(player, i, stack, (ctg_jetpack.wear_per_sec * dtime) * 0.8)
                         end
                         self._itemstack = stack
                         break
@@ -986,7 +986,7 @@ ctg_jetpack.on_step = function(self, dtime)
     end
 
     local a = vector.new()
-    local move_mult = math.min(20, move_speed * math.min(2, dtime) * 0.67 + 0.001)
+    local move_mult = math.min(20, move_speed * math.min(2, dtime) * 0.567 + 0.001)
     -- if self._disabled then move_mult = move_mult / 10 end
 
     local move_vect = ctg_jetpack.get_movement(self)
@@ -1000,15 +1000,15 @@ ctg_jetpack.on_step = function(self, dtime)
     local cur_y = self._driver:get_pos().y
     local vel = self._driver:get_velocity()
     if cur_y > 4000 then
-        vel = vector.multiply(vel, -0.0667)
+        vel = vector.multiply(vel, -0.0764)
     else
-        vel = vector.multiply(vel, -0.0977)
+        vel = vector.multiply(vel, -0.0988)
     end
     if vel.y > 0 then
         if cur_y > 4000 then
-            vel.y = math.min(vel.y * 2, 2)
+            vel.y = math.min(vel.y * 2, 2.0)
         else
-            vel.y = math.min(vel.y * 2, 2)
+            vel.y = math.min(vel.y * 2, 1.82)
         end
     end
     vel = vector.add(a, vel)
