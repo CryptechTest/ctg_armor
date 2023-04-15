@@ -790,7 +790,7 @@ local function generate_from_solar(self, dtime)
     end
 end
 
-local move_speed = 20
+local move_speed = 25
 ctg_jetpack.max_use_time = 30
 ctg_jetpack.wear_per_sec = 60100 / ctg_jetpack.max_use_time
 -- warn the player 5 sec before fuel runs out
@@ -986,7 +986,7 @@ ctg_jetpack.on_step = function(self, dtime)
     end
 
     local a = vector.new()
-    local move_mult = math.min(20, move_speed * math.min(2, dtime) * 0.567 + 0.001)
+    local move_mult = math.min(20, move_speed * math.min(1, dtime) * 0.457 + 0.01)
     -- if self._disabled then move_mult = move_mult / 10 end
 
     local move_vect = ctg_jetpack.get_movement(self)
@@ -1008,7 +1008,7 @@ ctg_jetpack.on_step = function(self, dtime)
         if cur_y > 4000 then
             vel.y = math.min(vel.y * 2, 2.0)
         else
-            vel.y = math.min(vel.y * 2, 1.82)
+            vel.y = math.min(vel.y * 2, 1.5)
         end
     end
     vel = vector.add(a, vel)
