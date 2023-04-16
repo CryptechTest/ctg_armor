@@ -130,7 +130,7 @@ minetest.register_on_joinplayer(function(player)
             -- end, v, player)
             minetest.after(0.5, function(vel, driver)
                 -- player:add_velocity(vel)
-                player:set_velocity({ 0, 0, 0 })
+                player:set_velocity({0, 0, 0})
             end, v, player)
         end
     end
@@ -306,9 +306,9 @@ ctg_jetpack.get_movement = function(self)
     local up = 0
     local right = 0
     if ctrl.up then
-        forward = 3 * mod
+        forward = 4 * mod
         if (cur_y < 4000) then
-            forward = 4.28 * mod
+            forward = 5.0 * mod
         end
     elseif ctrl.down then
         forward = -0.5 * mod
@@ -319,7 +319,7 @@ ctg_jetpack.get_movement = function(self)
     if ctrl.jump then
         up = 1.37 * mod
         if (cur_y < 4000) then
-            up = 5.0 * mod
+            up = 6.0 * mod
         end
     elseif ctrl.aux1 then
         up = -1 * mod
@@ -329,14 +329,8 @@ ctg_jetpack.get_movement = function(self)
     end
     if ctrl.left then
         right = -0.5 * mod
-        if (cur_y < 4000) then
-            right = -0.5 * mod
-        end
     elseif ctrl.right then
         right = 0.5 * mod
-        if (cur_y < 4000) then
-            right = 0.5 * mod
-        end
     end
 
     local v = vector.new()
@@ -352,11 +346,11 @@ ctg_jetpack.get_movement = function(self)
     v.y = up
     local vn = vector.normalize(v)
     local vf = vector.add(vector.multiply(v, 0.420), vn)
-    local hzm = 3.6
+    local hzm = 3.7
     local vzm = 3.8
     if cur_y < 4000 then
-        vzm = 4.0
-        hzm = 3.8
+        vzm = 5.0
+        hzm = 4.0
     end
     if vf.y > vzm then
         vf.y = vzm
@@ -696,7 +690,7 @@ local function has_in_range(p, c_name, rng, thres)
     }
     local pos1 = vector.subtract(pos, range)
     local pos2 = vector.add(pos, range)
-    local nodes = minetest.find_nodes_in_area(pos1, pos2, { c_name })
+    local nodes = minetest.find_nodes_in_area(pos1, pos2, {c_name})
     return #nodes >= thres
 end
 
@@ -818,7 +812,7 @@ ctg_jetpack.on_step = function(self, dtime)
         return
     end
     if (self._age > 1 and self._driver:get_hp() <= 0) then
-        self._driver:set_velocity({ 0, 0, 0 })
+        self._driver:set_velocity({0, 0, 0})
         ctg_jetpack.detach_object(self, true)
         return
     end
@@ -986,7 +980,7 @@ ctg_jetpack.on_step = function(self, dtime)
     end
 
     local a = vector.new()
-    local move_mult = math.min(15, move_speed * math.min(1, dtime) * 0.457 + 0.01)
+    local move_mult = math.min(10, move_speed * math.min(1, dtime) * 0.357 + 0.01)
     -- if self._disabled then move_mult = move_mult / 10 end
 
     local move_vect = ctg_jetpack.get_movement(self)
@@ -1000,15 +994,15 @@ ctg_jetpack.on_step = function(self, dtime)
     local cur_y = self._driver:get_pos().y
     local vel = self._driver:get_velocity()
     if cur_y > 4000 then
-        vel = vector.multiply(vel, -0.0764)
+        vel = vector.multiply(vel, -0.0964)
     else
-        vel = vector.multiply(vel, -0.0988)
+        vel = vector.multiply(vel, -0.1051)
     end
     if vel.y > 0 then
         if cur_y > 4000 then
             vel.y = math.min(vel.y * 2, 2.0)
         else
-            vel.y = math.min(vel.y * 2, 1.5)
+            vel.y = math.min(vel.y * 2, 2.0)
         end
     end
     vel = vector.add(a, vel)
@@ -1022,13 +1016,13 @@ local function register_jetpack_entity(style, speed)
         timer = 0,
         visual = "mesh",
         mesh = "sum_jetpack.b3d",
-        textures = { "ctg_jetpack_" .. style .. "_texture.png" },
+        textures = {"ctg_jetpack_" .. style .. "_texture.png"},
         visual_size = {
             x = 1,
             y = 1,
             z = 1
         },
-        collisionbox = { -cbsize, -0, -cbsize, cbsize, cbsize * 6, cbsize },
+        collisionbox = {-cbsize, -0, -cbsize, cbsize, cbsize * 6, cbsize},
         pointable = false,
         get_staticdata = ctg_jetpack.get_staticdata,
         on_activate = ctg_jetpack.on_activate,
