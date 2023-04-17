@@ -828,6 +828,9 @@ ctg_jetpack.on_step = function(self, dtime)
         else
             self._press = 0
         end
+        if (self._age > 1) then
+            ctg_jetpack.set_altitude_hud(self._driver)
+        end
     end
     if self._age > 1 and jump and not self._active then
         local wear = self._itemstack:get_wear()

@@ -18,6 +18,14 @@ local OFFSET_BAR = {
     x = 0,
     y = 0
 }
+local OFFSET_ALT_LABEL = {
+    x = 0,
+    y = 42
+}
+local OFFSET_ALT = {
+    x = 0,
+    y = 60
+}
 local HUD_ALIGNMENT = {
     x = 1,
     y = 0
@@ -93,6 +101,33 @@ local setup_hud = function(player)
         number = 0xFF0000
     })
 
+    
+    hud_data.alt_label = player:hud_add({
+        hud_elem_type = "text",
+        position = HUD_POSITION,
+        offset = OFFSET_ALT_LABEL,
+        text = "Altitude:",
+        alignment = HUD_ALIGNMENT,
+        scale = {
+            x = 100,
+            y = 100
+        },
+        number = 0xffa600
+    })
+
+    hud_data.alt_level = player:hud_add({
+        hud_elem_type = "text",
+        position = HUD_POSITION,
+        offset = OFFSET_ALT,
+        text = "",
+        alignment = HUD_ALIGNMENT,
+        scale = {
+            x = 100,
+            y = 100
+        },
+        number = 0xffa600
+    })
+
 end
 
 local remove_hud = function(player)
@@ -104,6 +139,8 @@ local remove_hud = function(player)
     player:hud_remove(hud_data.fuel_label)
     player:hud_remove(hud_data.fuel_level)
     player:hud_remove(hud_data.status_message)
+    player:hud_remove(hud_data.alt_label)
+    player:hud_remove(hud_data.alt_level)
 
     hud[playername] = nil
 end
@@ -191,6 +228,21 @@ local update_hud = function(player, has_fuel, is_running, has_solar, armor_list,
     player:hud_change(hud_data.fuel_label, "number", color)
     player:hud_change(hud_data.fuel_level, "number", color)
 
+end
+
+ctg_jetpack.set_altitude_hud = function(player) 
+    local playername = player:get_player_name()
+    local hud_data = hud[playername]
+    if not hud_data then
+        return
+    end
+    local pos = player:get_pos()
+    if (pos.y < 22000 and pos.y > -11000) then
+        local yh = math.floor(pos.y * 100) * 0.01;
+        player:hud_change(hud_data.alt_level, "text", tostring(yh) .. " Meters")
+    else
+        player:hud_change(hud_data.alt_level, "text", "Unknown..")
+    end
 end
 
 minetest.register_on_leaveplayer(function(player)
