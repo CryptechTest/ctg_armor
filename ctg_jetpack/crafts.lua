@@ -104,37 +104,37 @@ if true then
         output = "ctg_jetpack:solar_helmet",
         recipe = {{sp, cs, sp}, {bt, sw, bt}, {sp, cs, sp}}
     })
-end
 
-if minetest.get_modpath("unified_inventory") then
-    unified_inventory.register_craft_type("refueling", {
-        description = "Refueling",
-        icon = "ctg_jetpack_iron_item.png",
-        width = 1,
-        height = 1
-    })
-    unified_inventory.register_craft({
-        type = "refueling",
-        output = jt,
-        items = {"ctg_jetpack:jetpack_fuel_hydrogen"},
-        width = 0
-    })
-    unified_inventory.register_craft({
-        type = "refueling",
-        output = ji,
-        items = {"ctg_jetpack:jetpack_fuel_rocket"},
-        width = 0
-    })
-    unified_inventory.register_craft({
-        type = "refueling",
-        output = jb,
-        items = {"ctg_jetpack:jetpack_fuel_rocket"},
-        width = 0
-    })
-    unified_inventory.register_craft({
-        type = "refueling",
-        output = jc,
-        items = {"default:coal_lump", "x_farming:bottle_water"},
-        width = 0
-    })
+    if minetest.get_modpath("unified_inventory") then
+        unified_inventory.register_craft_type("refueling", {
+            description = "Refueling",
+            icon = "ctg_jetpack_iron_item.png",
+            width = 1,
+            height = 1
+        })
+        unified_inventory.register_craft({
+            type = "refueling",
+            output = jt,
+            items = {"ctg_jetpack:jetpack_fuel_hydrogen"},
+            width = 0
+        })
+        unified_inventory.register_craft({
+            type = "refueling",
+            output = ji,
+            items = {"ctg_jetpack:jetpack_fuel_rocket"},
+            width = 0
+        })
+        unified_inventory.register_craft({
+            type = "refueling",
+            output = jb,
+            items = {"ctg_jetpack:jetpack_fuel_rocket"},
+            width = 0
+        })
+        unified_inventory.register_craft({
+            type = "refueling",
+            output = jc,
+            items = {"default:coal_lump", "x_farming:bottle_water"},
+            width = 0
+        })
+    end
 end
