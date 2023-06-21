@@ -805,6 +805,38 @@ function ctg_jetpack.setup(style)
     ctg_jetpack.wear_warn_level = (ctg_jetpack.max_use_time - 10) * ctg_jetpack.wear_per_sec
 end
 
+local disable_jetpack = function(self)
+    self._active = false
+    self.object:set_properties({
+        physical = false
+    })
+    sound_stop_all(self)
+    minetest.sound_play("sum_jetpack_fold", {
+        gain = 1,
+        object = self.object
+    })
+    local v = self.object:get_velocity()
+    v = vector.multiply(v, 0.8)
+    if self._driver then
+        minetest.after(0.01, function(vel, driver)
+            driver:add_velocity(vel)
+        end, v, self._driver)
+    end
+    local _, armor_inv = armor.get_valid_player(armor, self._driver, "[jetpack]")
+    local armor_list = armor_inv:get_list("armor")
+    for i, stack in pairs(armor_inv:get_list("armor")) do
+        if not stack:is_empty() then
+            local name = stack:get_name()
+            local wear = stack:get_wear()
+            if name:sub(1, 12) == "ctg_jetpack:" then
+                ctg_jetpack.set_player_wearing(self._driver, true, wear < 60100, false, self._generating,
+                    armor_list, armor_inv)
+            end
+        end
+    end
+    return false
+end
+
 ctg_jetpack.on_step = function(self, dtime)
     if not self._driver and self._age > 1 then
         -- minetest.log("has no driver.. ")
@@ -832,8 +864,11 @@ ctg_jetpack.on_step = function(self, dtime)
             ctg_jetpack.set_altitude_hud(self._driver)
         end
     end
-    if self._age > 1 and jump and not self._active then
-        local wear = self._itemstack:get_wear()
+    if self._age > 1 and jump and not self._active and self._itemstack ~= nil then
+        local wear = 1
+        if self._itemstack then
+            wear = self._itemstack:get_wear()    
+        end
         if self._press > 0.300 and wear and wear < 60000 then
             if (self._driver and self._driver:get_hp() <= 0) then
                 self.object:remove()
@@ -881,10 +916,8 @@ ctg_jetpack.on_step = function(self, dtime)
             for i, stack in pairs(armor_inv:get_list("armor")) do
                 if not stack:is_empty() then
                     local name = stack:get_name()
-                    -- local addon_jetpack = minetest.get_item_group(name, "armor_jetpack")	
                     wear = stack:get_wear()
                     if name:sub(1, 20) == "ctg_jetpack:jetpack_" and wear + ctg_jetpack.wear_per_sec * dtime < 60100 then
-                        -- if addon_jetpack ~= nil and wear + ctg_jetpack.wear_per_sec * dtime < 60100 then
                         ctg_jetpack.set_player_wearing(player, true, true, true, self._generating, armor_list, armor_inv)
                         if jump then
                             armor:damage(player, i, stack, (ctg_jetpack.wear_per_sec * dtime) * 4.0)
@@ -896,7 +929,6 @@ ctg_jetpack.on_step = function(self, dtime)
                         self._itemstack = stack
                         break
                     elseif name:sub(1, 20) == "ctg_jetpack:jetpack_" then
-                        -- elseif addon_jetpack ~= nil then
                         if (self._fuel > 0) then
                             local warn_sound = minetest.sound_play("sum_jetpack_warn", {
                                 gain = 0.3,
@@ -907,7 +939,7 @@ ctg_jetpack.on_step = function(self, dtime)
                         self._itemstack = stack
                         ctg_jetpack.set_player_wearing(player, true, false, false, self._generating, armor_list,
                             armor_inv)
-                        self._fuel = 0
+                        self._fuel = ctg_jetpack.max_use_time - (wear / ctg_jetpack.wear_per_sec)
                         self._active = false
                         self._disabled = true
                         return false
@@ -944,38 +976,18 @@ ctg_jetpack.on_step = function(self, dtime)
 
     local p = self.object:get_pos()
     local node_floor = minetest.get_node(vector.offset(p, 0, -0.2, 0))
-    -- local exit = self._age > 1 and not self._driver
+    local t_node = minetest.registered_nodes[node_floor.name]
+
+    if self._active and t_node and (t_node.climbable or t_node.groups['liquid']) then
+        -- disable jetpack on ladders..
+        -- disable jetpack in liquids
+        return disable_jetpack(self)
+    end
+    -- handle exit (sneak)
     local exit = (self._driver and self._driver:get_player_control().sneak) or (self._age > 1 and not self._driver)
     if exit or (not self._driver) or (not self.object:get_attach()) then
-        self._active = false
-        self.object:set_properties({
-            physical = false
-        })
-        sound_stop_all(self)
-        minetest.sound_play("sum_jetpack_fold", {
-            gain = 1,
-            object = self.object
-        })
-        local v = self.object:get_velocity()
-        v = vector.multiply(v, 0.8)
-        if self._driver then
-            minetest.after(0.01, function(vel, driver)
-                driver:add_velocity(vel)
-            end, v, self._driver)
-        end
-        local _, armor_inv = armor.get_valid_player(armor, self._driver, "[jetpack]")
-        local armor_list = armor_inv:get_list("armor")
-        for i, stack in pairs(armor_inv:get_list("armor")) do
-            if not stack:is_empty() then
-                local name = stack:get_name()
-                local wear = stack:get_wear()
-                if name:sub(1, 12) == "ctg_jetpack:" then
-                    ctg_jetpack.set_player_wearing(self._driver, true, wear < 60100, false, self._generating,
-                        armor_list, armor_inv)
-                end
-            end
-        end
-        return false
+        -- disable jetpack
+        return disable_jetpack(self)
     end
 
     if self._driver then
@@ -999,13 +1011,13 @@ ctg_jetpack.on_step = function(self, dtime)
     if cur_y > 4000 then
         vel = vector.multiply(vel, -0.0964)
     else
-        vel = vector.multiply(vel, -0.1051)
+        vel = vector.multiply(vel, -0.1042)
     end
     if vel.y > 0 then
         if cur_y > 4000 then
             vel.y = math.min(vel.y * 2, 2.0)
         else
-            vel.y = math.min(vel.y * 2, 2.0)
+            vel.y = math.min(vel.y * 1.5, 2.0)
         end
     end
     vel = vector.add(a, vel)
