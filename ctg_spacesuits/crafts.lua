@@ -1,77 +1,159 @@
 
-minetest.register_craft({
-	output = "ctg_spacesuit:helmet_gold",
-	recipe = {
-		{"default:gold_ingot", "default:glass", "default:gold_ingot"},
-		{"default:gold_ingot", "default:glass", "default:gold_ingot"},
-		{"group:wool", "default:goldblock", "group:wool"},
-	},
-})
+-- Wool Craftings
 
-minetest.register_craft({
-	output = "ctg_spacesuit:chestplate_gold",
-	recipe = {
-		{"default:gold_ingot", "default:mese", "default:gold_ingot"},
-		{"default:gold_ingot", "group:wool", "default:gold_ingot"},
-		{"default:gold_ingot", "default:goldblock", "default:gold_ingot"}
-	},
-})
+if minetest.get_modpath("wool") then
 
-minetest.register_craft({
-	output = "ctg_spacesuit:pants_gold",
-	recipe = {
-		{"default:gold_ingot", "group:wool", "default:gold_ingot"},
-		{"default:gold_ingot", "group:wool", "default:gold_ingot"},
-		{"default:gold_ingot", "group:wool", "default:gold_ingot"}
-	},
-})
+	minetest.register_craft({
+		output = "ctg_spacesuit:helmet_gold",
+		recipe = {
+			{"default:gold_ingot", "default:glass", "default:gold_ingot"},
+			{"default:gold_ingot", "default:glass", "default:gold_ingot"},
+			{"group:wool", "default:goldblock", "group:wool"},
+		},
+	})
 
-minetest.register_craft({
-	output = "ctg_spacesuit:boots_gold",
-	recipe = {
-		{"group:wool", "", "group:wool"},
-		{"default:gold_ingot", "group:wool", "default:gold_ingot"},
-		{"default:gold_ingot", "group:wool", "default:gold_ingot"},
-	},
-})
+	minetest.register_craft({
+		output = "ctg_spacesuit:chestplate_gold",
+		recipe = {
+			{"default:gold_ingot", "default:mese", "default:gold_ingot"},
+			{"default:gold_ingot", "group:wool", "default:gold_ingot"},
+			{"default:gold_ingot", "default:goldblock", "default:gold_ingot"}
+		},
+	})
+
+	minetest.register_craft({
+		output = "ctg_spacesuit:pants_gold",
+		recipe = {
+			{"default:gold_ingot", "group:wool", "default:gold_ingot"},
+			{"default:gold_ingot", "group:wool", "default:gold_ingot"},
+			{"default:gold_ingot", "group:wool", "default:gold_ingot"}
+		},
+	})
+
+	minetest.register_craft({
+		output = "ctg_spacesuit:boots_gold",
+		recipe = {
+			{"group:wool", "", "group:wool"},
+			{"default:gold_ingot", "group:wool", "default:gold_ingot"},
+			{"default:gold_ingot", "group:wool", "default:gold_ingot"},
+		},
+	})
 
 
-minetest.register_craft({
-	output = "ctg_spacesuit:helmet_titanium",
-	recipe = {
-		{"ctg_world:titanium_ingot", "default:glass", "ctg_world:titanium_ingot"},
-		{"ctg_world:titanium_ingot", "default:glass", "ctg_world:titanium_ingot"},
-		{"group:wool", "ctg_world:titanium_block", "group:wool"},
-	},
-})
+	minetest.register_craft({
+		output = "ctg_spacesuit:helmet_titanium",
+		recipe = {
+			{"ctg_world:titanium_ingot", "default:glass", "ctg_world:titanium_ingot"},
+			{"ctg_world:titanium_ingot", "default:glass", "ctg_world:titanium_ingot"},
+			{"group:wool", "ctg_world:titanium_block", "group:wool"},
+		},
+	})
 
-minetest.register_craft({
-	output = "ctg_spacesuit:chestplate_titanium",
-	recipe = {
-		{"ctg_world:titanium_ingot", "default:mese", "ctg_world:titanium_ingot"},
-		{"ctg_world:titanium_ingot", "group:wool", "ctg_world:titanium_ingot"},
-		{"ctg_world:titanium_ingot", "ctg_world:titanium_block", "ctg_world:titanium_ingot"}
-	},
-})
+	minetest.register_craft({
+		output = "ctg_spacesuit:chestplate_titanium",
+		recipe = {
+			{"ctg_world:titanium_ingot", "default:mese", "ctg_world:titanium_ingot"},
+			{"ctg_world:titanium_ingot", "group:wool", "ctg_world:titanium_ingot"},
+			{"ctg_world:titanium_ingot", "ctg_world:titanium_block", "ctg_world:titanium_ingot"}
+		},
+	})
 
-minetest.register_craft({
-	output = "ctg_spacesuit:pants_titanium",
-	recipe = {
-		{"ctg_world:titanium_ingot", "group:wool", "ctg_world:titanium_ingot"},
-		{"ctg_world:titanium_ingot", "group:wool", "ctg_world:titanium_ingot"},
-		{"ctg_world:titanium_ingot", "group:wool", "ctg_world:titanium_ingot"}
-	},
-})
+	minetest.register_craft({
+		output = "ctg_spacesuit:pants_titanium",
+		recipe = {
+			{"ctg_world:titanium_ingot", "group:wool", "ctg_world:titanium_ingot"},
+			{"ctg_world:titanium_ingot", "group:wool", "ctg_world:titanium_ingot"},
+			{"ctg_world:titanium_ingot", "group:wool", "ctg_world:titanium_ingot"}
+		},
+	})
 
-minetest.register_craft({
-	output = "ctg_spacesuit:boots_titanium",
-	recipe = {
-		{"group:wool", "", "group:wool"},
-		{"ctg_world:titanium_ingot", "group:wool", "ctg_world:titanium_ingot"},
-		{"ctg_world:titanium_ingot", "group:wool", "ctg_world:titanium_ingot"},
-	},
-})
+	minetest.register_craft({
+		output = "ctg_spacesuit:boots_titanium",
+		recipe = {
+			{"group:wool", "", "group:wool"},
+			{"ctg_world:titanium_ingot", "group:wool", "ctg_world:titanium_ingot"},
+			{"ctg_world:titanium_ingot", "group:wool", "ctg_world:titanium_ingot"},
+		},
+	})
+end
 
+-- Cotton Craftings
+
+if minetest.get_modpath("x_farming") then
+
+	minetest.register_craft({
+		output = "ctg_spacesuit:helmet_gold",
+		recipe = {
+			{"default:gold_ingot", "default:glass", "default:gold_ingot"},
+			{"default:gold_ingot", "default:glass", "default:gold_ingot"},
+			{"x_farming:pillow_yellow", "default:goldblock", "x_farming:pillow_yellow"},
+		},
+	})
+
+	minetest.register_craft({
+		output = "ctg_spacesuit:chestplate_gold",
+		recipe = {
+			{"default:gold_ingot", "default:mese", "default:gold_ingot"},
+			{"default:gold_ingot", "x_farming:pillow_yellow", "default:gold_ingot"},
+			{"default:gold_ingot", "default:goldblock", "default:gold_ingot"}
+		},
+	})
+
+	minetest.register_craft({
+		output = "ctg_spacesuit:pants_gold",
+		recipe = {
+			{"default:gold_ingot", "x_farming:pillow_yellow", "default:gold_ingot"},
+			{"default:gold_ingot", "x_farming:pillow_yellow", "default:gold_ingot"},
+			{"default:gold_ingot", "x_farming:pillow_yellow", "default:gold_ingot"}
+		},
+	})
+
+	minetest.register_craft({
+		output = "ctg_spacesuit:boots_gold",
+		recipe = {
+			{"x_farming:pillow_yellow", "", "x_farming:pillow_yellow"},
+			{"default:gold_ingot", "x_farming:pillow_yellow", "default:gold_ingot"},
+			{"default:gold_ingot", "x_farming:pillow_yellow", "default:gold_ingot"},
+		},
+	})
+
+
+	minetest.register_craft({
+		output = "ctg_spacesuit:helmet_titanium",
+		recipe = {
+			{"ctg_world:titanium_ingot", "default:glass", "ctg_world:titanium_ingot"},
+			{"ctg_world:titanium_ingot", "default:glass", "ctg_world:titanium_ingot"},
+			{"x_farming:pillow_blue", "ctg_world:titanium_block", "x_farming:pillow_blue"},
+		},
+	})
+
+	minetest.register_craft({
+		output = "ctg_spacesuit:chestplate_titanium",
+		recipe = {
+			{"ctg_world:titanium_ingot", "default:mese", "ctg_world:titanium_ingot"},
+			{"ctg_world:titanium_ingot", "x_farming:pillow_blue", "ctg_world:titanium_ingot"},
+			{"ctg_world:titanium_ingot", "ctg_world:titanium_block", "ctg_world:titanium_ingot"}
+		},
+	})
+
+	minetest.register_craft({
+		output = "ctg_spacesuit:pants_titanium",
+		recipe = {
+			{"ctg_world:titanium_ingot", "x_farming:pillow_blue", "ctg_world:titanium_ingot"},
+			{"ctg_world:titanium_ingot", "x_farming:pillow_blue", "ctg_world:titanium_ingot"},
+			{"ctg_world:titanium_ingot", "x_farming:pillow_blue", "ctg_world:titanium_ingot"}
+		},
+	})
+
+	minetest.register_craft({
+		output = "ctg_spacesuit:boots_titanium",
+		recipe = {
+			{"x_farming:pillow_blue", "", "x_farming:pillow_blue"},
+			{"ctg_world:titanium_ingot", "x_farming:pillow_blue", "ctg_world:titanium_ingot"},
+			{"ctg_world:titanium_ingot", "x_farming:pillow_blue", "ctg_world:titanium_ingot"},
+		},
+	})
+end
 
 -- spacesuit repair recipes
 local function repair_recipe(partname)
