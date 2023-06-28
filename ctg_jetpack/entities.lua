@@ -275,6 +275,7 @@ ctg_jetpack.on_death = function(self, nothing)
     if self._driver then
         minetest.after(0.01, function(vel, driver)
             driver:add_velocity(vel)
+            otherworlds.gravity.reset(driver)
         end, v, self._driver)
     end
     ctg_jetpack.detach_object(self, true)
@@ -331,7 +332,7 @@ ctg_jetpack.get_movement = function(self)
     if ctrl.jump then
         up = 1.37 * mod
         if (cur_y < 4000) then
-            up = 6.0 * mod
+            up = 2.0 * mod
         end
     elseif ctrl.aux1 then
         up = -1 * mod
@@ -361,7 +362,7 @@ ctg_jetpack.get_movement = function(self)
     local hzm = 3.7
     local vzm = 3.8
     if cur_y < 4000 then
-        vzm = 5.0
+        vzm = 4.2
         hzm = 4.0
     end
     if vf.y > vzm then
@@ -970,6 +971,9 @@ ctg_jetpack.on_step = function(self, dtime)
             -- ctg_jetpack.on_death(self, nil)
             -- self.object:remove()
             self._active = false
+            if self._driver then
+                otherworlds.gravity.reset(self._driver)
+            end
             return false
         elseif wear >= ctg_jetpack.wear_warn_level and (not self._flags.warn) then
             minetest.chat_send_player(self._driver:get_player_name(), S("Your @1 is almost out of fuel!", "Jetpack"))
