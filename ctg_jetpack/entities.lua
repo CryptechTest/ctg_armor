@@ -280,6 +280,18 @@ ctg_jetpack.on_death = function(self, nothing)
     ctg_jetpack.detach_object(self, true)
 end
 
+-- gravity things
+
+local square = math.sqrt;
+local get_distance = function(a, b)
+    local x, y, z = a.x - b.x, a.y - b.y, a.z - b.z
+    return square(x * x + y * y + z * z)
+end
+
+ctg_jetpack.apply_gravity = function(player, grav)
+    otherworlds.gravity.xset(player, grav)
+end
+
 -- sum_jetpack
 
 ctg_jetpack.get_movement = function(self)
@@ -816,10 +828,13 @@ local disable_jetpack = function(self)
         object = self.object
     })
     local v = self.object:get_velocity()
-    v = vector.multiply(v, 0.8)
     if self._driver then
+        v = vector.multiply(v, 0.6)
         minetest.after(0.01, function(vel, driver)
-            driver:add_velocity(vel)
+            if driver then
+                driver:add_velocity(vel)
+                otherworlds.gravity.reset(driver)
+            end
         end, v, self._driver)
     end
     local _, armor_inv = armor.get_valid_player(armor, self._driver, "[jetpack]")
@@ -884,6 +899,7 @@ ctg_jetpack.on_step = function(self, dtime)
             self._active = true
             self._press = 0
             self._age = 1
+            ctg_jetpack.apply_gravity(self._driver, 0.05)
             minetest.sound_play("sum_jetpack_flame_start", {
                 gain = 0.3,
                 object = self.object
@@ -1022,6 +1038,7 @@ ctg_jetpack.on_step = function(self, dtime)
     end
     vel = vector.add(a, vel)
     self._driver:add_velocity(vel)
+    ctg_jetpack.apply_gravity(self._driver, 0.088)
 end
 
 local function register_jetpack_entity(style, speed)
