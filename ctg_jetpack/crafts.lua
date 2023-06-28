@@ -95,15 +95,23 @@ if true then
         recipe = {{t, ic, t}, {t, b, t}, {t, ji, t}}
     })
 
-    local sp = "technic:solar_panel"
     local bt = "technic:battery"
     local cs = "basic_materials:copper_strip"
+    local sp = "technic:solar_panel"
     local sw = "technic:doped_silicon_wafer"
 
-    minetest.register_craft({
-        output = "ctg_jetpack:solar_helmet",
-        recipe = {{sp, cs, sp}, {bt, sw, bt}, {sp, cs, sp}}
-    })
+    if minetest.get_modpath("ship_parts") then
+        local sc = "ship_parts:solar_collimator"
+        minetest.register_craft({
+            output = "ctg_jetpack:solar_helmet",
+            recipe = {{"", cs, ""}, {bt, sc, bt}, {"", cs, ""}}
+        })
+    else
+        minetest.register_craft({
+            output = "ctg_jetpack:solar_helmet",
+            recipe = {{sp, cs, sp}, {bt, sw, bt}, {sp, cs, sp}}
+        })
+    end
 
     if minetest.get_modpath("unified_inventory") then
         unified_inventory.register_craft_type("refueling", {
