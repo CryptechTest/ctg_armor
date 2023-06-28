@@ -79,6 +79,7 @@ function ctg_jetpack.register_jetpack(style)
     armor:register_armor("ctg_jetpack:jetpack_" .. style, {
         description = S(firstToUpper(style) .. " Jetpack"),
         -- _tt_help = S("About 60 seconds of use per fuel"),
+        _tt_help = S("Uses fuel to fly around"),
         _doc_items_longdesc = S("Can be used to fly."),
         inventory_image = "ctg_jetpack_" .. style .. "_item.png",
         groups = {
@@ -98,6 +99,8 @@ function ctg_jetpack.register_jetpack(style)
             explody = 1,
             level = 2
         },
+        wear = 0,
+        wear_represents = "jetpack_wear",
         on_equip = function(user, index, stack)
             if user:get_attach() ~= nil then
                 return false
