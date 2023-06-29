@@ -322,7 +322,7 @@ ctg_jetpack.get_movement = function(self)
     if ctrl.up then
         forward = 4 * mod
         if (cur_y < 4000) then
-            forward = 5.0 * mod
+            forward = 6.2 * mod
         end
     elseif ctrl.down then
         forward = -0.5 * mod
@@ -333,12 +333,12 @@ ctg_jetpack.get_movement = function(self)
     if ctrl.jump then
         up = 1.37 * mod
         if (cur_y < 4000) then
-            up = 2.0 * mod
+            up = 1.92 * mod
         end
     elseif ctrl.aux1 then
         up = -1 * mod
         if (cur_y < 4000) then
-            up = -3 * mod
+            up = -3.5 * mod
         end
     end
     if ctrl.left then
@@ -360,11 +360,11 @@ ctg_jetpack.get_movement = function(self)
     v.y = up
     local vn = vector.normalize(v)
     local vf = vector.add(vector.multiply(v, 0.420), vn)
-    local hzm = 3.7
+    local hzm = 3.9
     local vzm = 3.8
     if cur_y < 4000 then
         vzm = 4.2
-        hzm = 4.0
+        hzm = 4.4
     end
     if vf.y > vzm then
         vf.y = vzm
@@ -762,7 +762,7 @@ local function generate_from_solar(self, dtime)
                     end
                 end
             end
-            local amt = 10 + (light - 10) * dtime * 2.5
+            local amt = 25 + (light - 10) * dtime * 2.5
             local update = false
             if (jetpack ~= nil and light >= 12 and amt >= 5 and jetpack:get_wear() < 60100) then
                 for i, stack in ipairs(armor_inv:get_list("armor")) do
@@ -1016,7 +1016,7 @@ ctg_jetpack.on_step = function(self, dtime)
     end
 
     local a = vector.new()
-    local move_mult = math.min(10, move_speed * math.min(1, dtime) * 0.357 + 0.01)
+    local move_mult = math.min(8, move_speed * math.min(1, dtime) * 0.357 + 0.01)
     -- if self._disabled then move_mult = move_mult / 10 end
 
     local move_vect = ctg_jetpack.get_movement(self)
@@ -1030,7 +1030,7 @@ ctg_jetpack.on_step = function(self, dtime)
     local cur_y = self._driver:get_pos().y
     local vel = self._driver:get_velocity()
     if cur_y > 4000 then
-        vel = vector.multiply(vel, -0.0964)
+        vel = vector.multiply(vel, -0.0944)
     else
         vel = vector.multiply(vel, -0.1042)
     end
@@ -1043,7 +1043,7 @@ ctg_jetpack.on_step = function(self, dtime)
     end
     vel = vector.add(a, vel)
     self._driver:add_velocity(vel)
-    ctg_jetpack.apply_gravity(self._driver, 0.088)
+    ctg_jetpack.apply_gravity(self._driver, 0.08)
 end
 
 local function register_jetpack_entity(style, speed)
