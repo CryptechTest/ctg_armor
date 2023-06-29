@@ -180,6 +180,7 @@ ctg_jetpack.detach_object = function(self, clear_jetpack)
     if clear_jetpack and self._driver then
         ctg_jetpack.set_player_wearing(self._driver, false, false, false, false, nil, nil)
         remove_jetpack(self._driver)
+        otherworlds.gravity.reset(self._driver)
     end
     -- minetest.log('detach_object...')
 end
