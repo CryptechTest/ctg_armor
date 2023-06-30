@@ -865,9 +865,12 @@ ctg_jetpack.on_step = function(self, dtime)
         ctg_jetpack.detach_object(self, true)
         return
     end
+    local p = self.object:get_pos()
+    local node_floor = minetest.get_node(vector.offset(p, 0, 0.25, 0))
+    local t_node = minetest.registered_nodes[node_floor.name]
     local move = false
     local jump = false
-    if self._driver and self._driver:is_player() then
+    if self._driver and self._driver:is_player() and not (t_node.climbable or t_node.groups['liquid']) then
         local ctrl = self._driver:get_player_control()
         if ctrl and ctrl.left or ctrl.right or ctrl.up or ctrl.down then
             move = true
@@ -995,10 +998,6 @@ ctg_jetpack.on_step = function(self, dtime)
     end
 
     ctg_jetpack.do_particles(self, dtime)
-
-    local p = self.object:get_pos()
-    local node_floor = minetest.get_node(vector.offset(p, 0, -0.2, 0))
-    local t_node = minetest.registered_nodes[node_floor.name]
 
     if self._active and t_node and (t_node.climbable or t_node.groups['liquid']) then
         -- disable jetpack on ladders..
