@@ -960,6 +960,7 @@ ctg_jetpack.on_step = function(self, dtime)
                         self._fuel = ctg_jetpack.max_use_time - (wear / ctg_jetpack.wear_per_sec)
                         self._active = false
                         self._disabled = true
+                        otherworlds.gravity.reset(self._driver)
                         return false
                     end
                 end
@@ -1016,7 +1017,7 @@ ctg_jetpack.on_step = function(self, dtime)
     end
 
     local a = vector.new()
-    local move_mult = math.min(8, move_speed * math.min(1, dtime) * 0.357 + 0.01)
+    local move_mult = math.min(6, move_speed * math.min(0.5, dtime) * 0.357 + 0.01)
     -- if self._disabled then move_mult = move_mult / 10 end
 
     local move_vect = ctg_jetpack.get_movement(self)
