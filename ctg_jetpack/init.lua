@@ -126,6 +126,9 @@ function ctg_jetpack.register_jetpack(style)
                     return
                 end
                 local v = user:get_velocity()
+                if not v then
+                    return
+                end
                 v = vector.multiply(v, 0.8)
                 v.y = math.max(v.y, -50)
                 ctg_jetpack.attach_object(ent, user)
