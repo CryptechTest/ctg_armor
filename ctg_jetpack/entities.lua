@@ -894,7 +894,8 @@ ctg_jetpack.on_step = function(self, dtime)
                 self.object:remove()
                 return
             end
-            if (self._driver and self._driver:get_attach() and #self._driver:get_attach() > 0) then
+            --if (self._driver and self._driver:get_attach() and #self._driver:get_attach() > 0) then
+            if (self._driver and self._driver:get_attach()) then
                 return
             end
             self.object:set_properties({
