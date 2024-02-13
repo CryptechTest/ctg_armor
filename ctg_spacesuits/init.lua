@@ -10,5 +10,3 @@ dofile(default_path .. DIR_DELIM .. "titanium.lua")
 
 dofile(default_path .. DIR_DELIM .. "crafts.lua")
 
-
-
