@@ -21,7 +21,7 @@ dofile(default_path .. DIR_DELIM .. "solar_helmet.lua")
 
 -- =========================================================
 
-function firstToUpper(str)
+local function firstToUpper(str)
     return (str:gsub("^%l", string.upper))
 end
 
@@ -140,7 +140,7 @@ function ctg_jetpack.register_jetpack(style)
                     gain = 1,
                     object = ent.object
                 })
-                ent._itemstcack = stack
+                ent._itemstack = stack
                 ent._flags.ready = true
                 local _, armor_inv = armor.get_valid_player(armor, user, "[jetpack]")
                 local armor_list = armor_inv:get_list("armor")
