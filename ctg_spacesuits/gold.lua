@@ -5,7 +5,7 @@ armor:register_armor("ctg_spacesuit:helmet_gold", {
     groups = {
         armor_head = 5,
         armor_heal = 1,
-        armor_use = spacesuit.armor_use - 5,
+        armor_use = spacesuit.armor_use * 0.7,
         not_repaired_by_anvil = 1,
         physics_speed = -0.02,
         physics_gravity = 0.02,
@@ -31,7 +31,7 @@ armor:register_armor("ctg_spacesuit:chestplate_gold", {
     groups = {
         armor_torso = 8,
         armor_heal = 1,
-        armor_use = spacesuit.armor_use - 5,
+        armor_use = spacesuit.armor_use * 0.7,
         not_repaired_by_anvil = 1,
         physics_speed = -0.05,
         physics_gravity = 0.03,
@@ -57,7 +57,7 @@ armor:register_armor("ctg_spacesuit:pants_gold", {
     groups = {
         armor_legs = 7,
         armor_heal = 1,
-        armor_use = spacesuit.armor_use - 5,
+        armor_use = spacesuit.armor_use * 0.7,
         not_repaired_by_anvil = 1,
         physics_speed = -0.04,
         physics_gravity = 0.04,
@@ -83,7 +83,7 @@ armor:register_armor("ctg_spacesuit:boots_gold", {
     groups = {
         armor_feet = 4,
         armor_heal = 1,
-        armor_use = spacesuit.armor_use - 5,
+        armor_use = spacesuit.armor_use * 0.7,
         not_repaired_by_anvil = 1,
         physics_speed = -0.02,
         physics_gravity = 0.02,
