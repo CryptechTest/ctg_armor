@@ -67,7 +67,7 @@ end
 local function refill_player_jetpack(itemstack, player, pointed_thing)
     local name, invs = armor:get_valid_player(player, "[refill_jetpack]")
     if not name then
-        return
+        return core.item_place(itemstack, player, pointed_thing)
     end
     local take_bottle = false
     local wear_cut_off = 2500
@@ -139,15 +139,62 @@ local function refill_player_jetpack(itemstack, player, pointed_thing)
                 max_hear_distance = 7
             })
         end
+        return itemstack
     end
-    return itemstack
+    return core.item_place(itemstack, player, pointed_thing)
+end
+
+-- make explosion with protection and tnt mod check
+local function boom(self, pos, radius, damage_radius)
+	if minetest.get_modpath("ship_weapons") and ship_weapons then
+        if ship_weapons.plasma_boom and not minetest.is_protected(pos, "") then
+            ship_weapons.plasma_boom(pos, {
+                radius = radius,
+                damage_radius = damage_radius,
+                sound = self.sounds and self.sounds.explode,
+                explode_center = true,
+                ignore_protection = false,
+                fire = false,
+            })
+        elseif ship_weapons.safe_plasma_boom then
+            ship_weapons.safe_plasma_boom(pos, {
+                radius = radius,
+                sound = self.sounds and self.sounds.explode,
+                explode_center = true,
+                damage_radius * 1.25,
+                ignore_protection = false,
+                fire = false,
+            })
+        end
+    end
+end
+
+local on_blast_bottle = function(pos)
+    core.remove_node(pos)
+    local radius = 2.07
+    local t = math.random(0,3) * 0.01
+    core.after(t, function()
+        boom({sounds = {explode = "tnt_explode"}}, pos, radius, radius)
+    end)
+    return nil
+end
+
+local on_dig_bottle = function(pos, oldnode, digger)
+    core.remove_node(pos)
+    if not digger or not digger:is_player() then
+        return -- Dug by a mod. Don't drop anything
+    end
+    local inv = digger:get_inventory()
+    inv:add_item("main", oldnode.name)
 end
 
 if core.get_modpath("ctg_machines") then
     -- refil from hydrogen bottle
     core.override_item("ctg_machines:hydrogen_bottle", {
         on_secondary_use = refill_player_jetpack,
-        on_place = refill_player_jetpack
+        on_place = refill_player_jetpack,
+        on_blast = on_blast_bottle,
+        on_dig = on_dig_bottle
     })
     -- refill from adv rocket fuel
     core.override_item("ctg_jetpack:jetpack_fuel_hydrogen", {
