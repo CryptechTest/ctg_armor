@@ -31,12 +31,12 @@ local HUD_ALIGNMENT = {
     y = 0
 }
 
-local hud = {} -- playername -> data
+ctg_jetpack.hud = {} -- playername -> data
 
 local setup_hud = function(player)
     local playername = player:get_player_name()
     local hud_data = {}
-    hud[playername] = hud_data
+    ctg_jetpack.hud[playername] = hud_data
 
     hud_data.fuel_bg = player:hud_add({
         hud_elem_type = "image",
@@ -131,7 +131,7 @@ end
 
 local remove_hud = function(player)
     local playername = player:get_player_name()
-    local hud_data = hud[playername]
+    local hud_data = ctg_jetpack.hud[playername]
 
     player:hud_remove(hud_data.fuel_bg)
     player:hud_remove(hud_data.fuel_fg)
@@ -141,7 +141,7 @@ local remove_hud = function(player)
     player:hud_remove(hud_data.alt_label)
     player:hud_remove(hud_data.alt_level)
 
-    hud[playername] = nil
+    ctg_jetpack.hud[playername] = nil
 end
 
 local get_color = function(r, g, b)
@@ -152,7 +152,7 @@ local last_fuel_value = math.floor(1)
 
 local update_hud = function(player, has_fuel, is_running, has_solar, armor_list, clear)
     local playername = player:get_player_name()
-    local hud_data = hud[playername]
+    local hud_data = ctg_jetpack.hud[playername]
 
     if not hud_data then
         return
@@ -231,7 +231,7 @@ end
 
 ctg_jetpack.set_altitude_hud = function(player)
     local playername = player:get_player_name()
-    local hud_data = hud[playername]
+    local hud_data = ctg_jetpack.hud[playername]
     if not hud_data then
         return
     end
@@ -247,13 +247,13 @@ end
 core.register_on_leaveplayer(function(player)
     -- remove stale hud data
     local playername = player:get_player_name()
-    hud[playername] = nil
+    ctg_jetpack.hud[playername] = nil
 end)
 
 ctg_jetpack.mod_player_wearing = function(player, has_jetpack, has_fuel, is_active, has_solar, armor_list, armor_inv,
     clear)
     local playername = player:get_player_name()
-    local hud_data = hud[playername]
+    local hud_data = ctg_jetpack.hud[playername]
 
     local has_helmet = armor_inv and
                            (armor_inv:contains_item("armor", "spacesuit:helmet_base") or
@@ -293,7 +293,7 @@ ctg_jetpack.set_player_wearing = function(player, has_jetpack, has_fuel, is_acti
 end
 
 ctg_jetpack.set_player_jetpack_hud = function(player)
-    local _, armor_inv = armor.get_valid_player(armor, player, "[jetpack]")
+    local _, armor_inv = armor:get_valid_player(player, "[jetpack]")
     local armor_list = armor_inv:get_list("armor")
     local wear = 0
     local _has = false
@@ -316,5 +316,5 @@ ctg_jetpack.set_player_jetpack_hud = function(player)
             break
         end
     end
-    ctg_jetpack.set_player_wearing(player, _has, wear < 61400, false, armor_list, armor_inv)
+    ctg_jetpack.set_player_wearing(player, _has, wear < 61400, false, false, armor_list, armor_inv)
 end

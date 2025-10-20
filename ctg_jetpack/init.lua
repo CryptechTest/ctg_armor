@@ -1,6 +1,7 @@
 local S = core.get_translator(core.get_current_modname())
 
 ctg_jetpack = {}
+ctg_jetpack.hud = {}
 
 -- load files
 local default_path = core.get_modpath("ctg_jetpack")
@@ -65,7 +66,7 @@ end
 
 -- allow player to use a hydrogen bottle or rocket fuel to fill their jetpack
 local function refill_player_jetpack(itemstack, player, pointed_thing)
-    local name, invs = armor:get_valid_player(player, "[refill_jetpack]")
+    local name, invs = armor:get_valid_player(player, "[jetpack]")
     if not name then
         return core.item_place(itemstack, player, pointed_thing)
     end
@@ -88,7 +89,7 @@ local function refill_player_jetpack(itemstack, player, pointed_thing)
                 wear_cut_off = 65535 * 0.051
                 if item:get_name() == "ctg_jetpack:jetpack_titanium" then
                     if item:get_wear() > wear_cut_off then
-                        local max_refill = math.max(item:get_wear(), 65535)
+                        local max_refill = math.min((item:get_wear() * 0.88) + 2000, 65535)
                         armor:damage(player, i, item, -max_refill)
                         take_bottle = true
                         wear = item:get_wear();
@@ -135,7 +136,7 @@ local function refill_player_jetpack(itemstack, player, pointed_thing)
             minetest.sound_play("ctg_spacesuit_fill", {
                 pos = player:get_pos(),
                 pitch = 1.5,
-                gain = 0.420,
+                gain = 0.280,
                 max_hear_distance = 7
             })
         end
@@ -299,14 +300,14 @@ function ctg_jetpack.register_jetpack(style)
                 })
                 ent._itemstack = stack
                 ent._flags.ready = true
-                local _, armor_inv = armor.get_valid_player(armor, user, "[jetpack]")
+                local _, armor_inv = armor:get_valid_player(user, "[jetpack]")
                 local armor_list = armor_inv:get_list("armor")
                 for i, stack in pairs(armor_inv:get_list("armor")) do
                     if not stack:is_empty() then
                         local name = stack:get_name()
                         local wear = stack:get_wear()
                         if name:sub(1, 12) == "ctg_jetpack:" then
-                            ctg_jetpack.mod_player_wearing(user, true, wear < 61400, false, armor_list, armor_inv)
+                            ctg_jetpack.mod_player_wearing(user, true, wear < 61400, true, armor_list, armor_inv)
                         end
                     end
                 end

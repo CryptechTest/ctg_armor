@@ -35,7 +35,7 @@ if core.get_modpath("vacuum") then
     })
     core.register_craft({
         output = "ctg_jetpack:jetpack_fuel_hydrogen 5",
-        recipe = {{"", p, ""}, {"", h, ""}, {"", s, ""}}
+        recipe = {{"", h, ""}, {p, h, p}, {"", f, ""}}
     })
 end
 
@@ -129,6 +129,12 @@ if true then
             type = "refueling",
             output = jt,
             items = {"ctg_jetpack:jetpack_fuel_hydrogen"},
+            width = 1
+        })
+        unified_inventory.register_craft({
+            type = "refueling",
+            output = jt,
+            items = {"ctg_machines:hydrogen_bottle"},
             width = 1
         })
         unified_inventory.register_craft({
