@@ -1,9 +1,9 @@
-local S = minetest.get_translator(minetest.get_current_modname())
+local S = core.get_translator(core.get_current_modname())
 
 ctg_jetpack = {}
 
 -- load files
-local default_path = minetest.get_modpath("ctg_jetpack")
+local default_path = core.get_modpath("ctg_jetpack")
 
 dofile(default_path .. DIR_DELIM .. "entities.lua")
 dofile(default_path .. DIR_DELIM .. "items.lua")
@@ -11,7 +11,7 @@ dofile(default_path .. DIR_DELIM .. "crafts.lua")
 dofile(default_path .. DIR_DELIM .. "hud.lua")
 
 -- insert new element into 3d_armor. must do this.
-if minetest.global_exists("armor") and armor.elements then
+if core.global_exists("armor") and armor.elements then
     table.insert(armor.elements, "jetpack")
     table.insert(armor.elements, "module")
 end
@@ -30,7 +30,7 @@ local function get_nearby_jetpack(player)
         return
     end
     local pos = player:get_pos()
-    for i, obj in ipairs(minetest.get_objects_inside_radius(pos, 2)) do
+    for i, obj in ipairs(core.get_objects_inside_radius(pos, 2)) do
         if (obj ~= player) then
             local parachute = obj
             if (parachute ~= nil) then
@@ -38,7 +38,7 @@ local function get_nearby_jetpack(player)
                 if (ent and ent._jetpack ~= nil and
                     ((ent._driver and ent._driver:get_player_name() == player:get_player_name()) or
                         not ent.object:get_attach())) then
-                    -- minetest.log("parachute has driver nearby")
+                    -- core.log("parachute has driver nearby")
                     ent.object:set_properties({
                         physical = false
                     })
@@ -49,6 +49,116 @@ local function get_nearby_jetpack(player)
         end
     end
     return false
+end
+
+-- =========================================================
+-- =========================================================
+
+local function give_or_drop_item(player, itemstack)
+    local inv = core.get_inventory({
+        type = "player",
+        name = player:get_player_name()
+    })
+    local remaining = inv:add_item("main", itemstack)
+    core.add_item(player:get_pos(), remaining)
+end
+
+-- allow player to use a hydrogen bottle or rocket fuel to fill their jetpack
+local function refill_player_jetpack(itemstack, player, pointed_thing)
+    local name, invs = armor:get_valid_player(player, "[refill_jetpack]")
+    if not name then
+        return
+    end
+    local take_bottle = false
+    local wear_cut_off = 2500
+    local wear = 0
+    for i, item in ipairs(invs:get_list("armor")) do
+        if item and item:get_name() ~= "" then
+            if itemstack:get_name() == "ctg_machines:hydrogen_bottle" then
+                wear_cut_off = 65535 * 0.010
+                if item:get_name() == "ctg_jetpack:jetpack_titanium" then
+                    if item:get_wear() > wear_cut_off then
+                        local max_refill = math.min(item:get_wear() * 1.07, 65535)
+                        armor:damage(player, i, item, -max_refill)
+                        take_bottle = true
+                        wear = item:get_wear();
+                    end
+                end
+            elseif itemstack:get_name() == "ctg_jetpack:jetpack_fuel_hydrogen" then
+                wear_cut_off = 65535 * 0.051
+                if item:get_name() == "ctg_jetpack:jetpack_titanium" then
+                    if item:get_wear() > wear_cut_off then
+                        local max_refill = math.max(item:get_wear(), 65535)
+                        armor:damage(player, i, item, -max_refill)
+                        take_bottle = true
+                        wear = item:get_wear();
+                    end
+                end
+            elseif itemstack:get_name() == "ctg_jetpack:jetpack_fuel_rocket" then
+                wear_cut_off = 65535 * 0.051
+                if item:get_name() == "ctg_jetpack:jetpack_iron" then
+                    if item:get_wear() > wear_cut_off then
+                        local max_refill = math.max(item:get_wear(), 65535)
+                        armor:damage(player, i, item, -max_refill)
+                        take_bottle = true
+                        wear = item:get_wear();
+                    end
+                elseif item:get_name() == "ctg_jetpack:jetpack_bronze" then
+                    if item:get_wear() > wear_cut_off then
+                        local max_refill = math.max(item:get_wear(), 65535)
+                        armor:damage(player, i, item, -max_refill)
+                        take_bottle = true
+                        wear = item:get_wear();
+                    end
+                elseif item:get_name() == "ctg_jetpack:jetpack_copper" then
+                    if item:get_wear() > wear_cut_off then
+                        local max_refill = math.max(item:get_wear(), 65535)
+                        armor:damage(player, i, item, -max_refill)
+                        take_bottle = true
+                        wear = item:get_wear();
+                    end
+                end
+            end
+            if take_bottle then
+                -- only repair once per found
+                break;
+            end
+        end
+    end
+    if take_bottle then
+        itemstack:set_count(itemstack:get_count() - 1)
+        give_or_drop_item(player, "vessels:steel_bottle")
+        -- update hud
+        ctg_jetpack.set_player_jetpack_hud(player)
+        -- play sound
+        if core.get_modpath("ctg_spacesuit") then
+            minetest.sound_play("ctg_spacesuit_fill", {
+                pos = player:get_pos(),
+                pitch = 1.5,
+                gain = 0.420,
+                max_hear_distance = 7
+            })
+        end
+    end
+    return itemstack
+end
+
+if core.get_modpath("ctg_machines") then
+    -- refil from hydrogen bottle
+    core.override_item("ctg_machines:hydrogen_bottle", {
+        on_secondary_use = refill_player_jetpack,
+        on_place = refill_player_jetpack
+    })
+    -- refill from adv rocket fuel
+    core.override_item("ctg_jetpack:jetpack_fuel_hydrogen", {
+        on_secondary_use = refill_player_jetpack,
+        on_place = refill_player_jetpack
+    })
+    -- refill from rocket fuel
+    core.override_item("ctg_jetpack:jetpack_fuel_rocket", {
+        on_secondary_use = refill_player_jetpack,
+        on_place = refill_player_jetpack
+    })
 end
 
 -- =========================================================
@@ -105,22 +215,22 @@ function ctg_jetpack.register_jetpack(style)
             if user:get_attach() ~= nil then
                 return false
             end
-            if stack:get_wear() > 60100 then
+            if stack:get_wear() > 61400 then
                 return false
             end
-            if stack:get_wear() >= 60100 and user then
-                minetest.chat_send_player(user:get_player_name(), S("Your @1 is out of fuel!", description))
+            if stack:get_wear() >= 61400 and user then
+                core.chat_send_player(user:get_player_name(), S("Your @1 is out of fuel!", description))
             end
             if get_nearby_jetpack(user) then
-                -- minetest.log("removed old jetpack entity...")
+                -- core.log("removed old jetpack entity...")
             end
-            -- minetest.log("equipping jetpack")
+            -- core.log("equipping jetpack")
             local pos = user:get_pos()
-            minetest.after(0.2, function(pos, style, user, stack)
+            core.after(0.2, function(pos, style, user, stack)
                 if (user:get_hp() <= 0) then
                     return
                 end
-                local parachute = minetest.add_entity(pos, "ctg_jetpack:jetpack_" .. style .. "_entity")
+                local parachute = core.add_entity(pos, "ctg_jetpack:jetpack_" .. style .. "_entity")
                 local ent = parachute:get_luaentity()
                 if not ent or not user then
                     return
@@ -136,7 +246,7 @@ function ctg_jetpack.register_jetpack(style)
                 ent.object:set_properties({
                     physical = true
                 })
-                minetest.sound_play("sum_jetpack_open", {
+                core.sound_play("sum_jetpack_open", {
                     gain = 1,
                     object = ent.object
                 })
@@ -149,7 +259,7 @@ function ctg_jetpack.register_jetpack(style)
                         local name = stack:get_name()
                         local wear = stack:get_wear()
                         if name:sub(1, 12) == "ctg_jetpack:" then
-                            ctg_jetpack.set_player_wearing(user, true, wear < 60100, false, armor_list, armor_inv)
+                            ctg_jetpack.mod_player_wearing(user, true, wear < 61400, false, armor_list, armor_inv)
                         end
                     end
                 end
@@ -158,8 +268,8 @@ function ctg_jetpack.register_jetpack(style)
             return true
         end,
         on_unequip = function(player, index, stack)
-            minetest.after(0.1, function(user)
-                ctg_jetpack.set_player_wearing(player, false, false, false, nil, nil)
+            core.after(0.1, function(user)
+                ctg_jetpack.mod_player_wearing(player, false, false, false, nil, nil)
             end, player)
 
             if player:get_children() then

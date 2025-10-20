@@ -1,4 +1,4 @@
-local S = minetest.get_translator(minetest.get_current_modname())
+local S = core.get_translator(core.get_current_modname())
 
 armor:register_armor("ctg_jetpack:solar_helmet", {
     description = S("Jetpack Solar Addon"),
@@ -27,7 +27,7 @@ armor:register_armor("ctg_jetpack:solar_helmet", {
     on_unequip = function(player, index, stack)
         local _, armor_inv = armor.get_valid_player(armor, player, "[jetpack]")
         local armor_list = armor_inv:get_list("armor")
-        ctg_jetpack.set_player_wearing(player, true, true, false, false, armor_list, armor_inv, true)
+        ctg_jetpack.mod_player_wearing(player, true, true, false, false, armor_list, armor_inv, true)
         return true
     end
 })

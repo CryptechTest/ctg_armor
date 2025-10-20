@@ -1,4 +1,4 @@
-local S = minetest.get_translator(minetest.get_current_modname())
+local S = core.get_translator(core.get_current_modname())
 
 local jetpacks = {} -- playername -> data
 
@@ -43,13 +43,13 @@ function ctg_jetpack.get_staticdata(self)
         _age = self._age,
         _itemstack = itemstack
     }
-    return minetest.serialize(data)
+    return core.serialize(data)
 end
 
 function ctg_jetpack.on_activate(self, staticdata, dtime_s)
-    local data = minetest.deserialize(staticdata)
+    local data = core.deserialize(staticdata)
 
-    minetest.after(0.01, function()
+    core.after(0.01, function()
         if self._driver and self._driver:is_player() and self._itemstack == nil then
             local player = self._driver
             local _, armor_inv = armor.get_valid_player(armor, player, "[jetpack]")
@@ -102,7 +102,7 @@ ctg_jetpack.attach_object = function(self, obj)
     self._driver = obj
     ctg_jetpack.set_attach(self)
     if self._driver and self.object then
-        self.object:set_yaw(minetest.dir_to_yaw(self._driver:get_look_dir()))
+        self.object:set_yaw(core.dir_to_yaw(self._driver:get_look_dir()))
     end
 
     if not is_setup_jetpack(obj, self) then
@@ -113,7 +113,7 @@ ctg_jetpack.attach_object = function(self, obj)
 end
 
 -- make sure the player doesn't get stuck
-minetest.register_on_joinplayer(function(player)
+core.register_on_joinplayer(function(player)
     local pos = player:get_pos()
     if (pos.y > 4000) then
         -- space join velocity fix..
@@ -125,17 +125,17 @@ minetest.register_on_joinplayer(function(player)
         end
         v = vector.multiply(v, 2)
         if player then
-            -- minetest.after(0.2, function(vel, driver)
+            -- core.after(0.2, function(vel, driver)
             --    player:add_velocity(vel)
             -- end, v, player)
-            minetest.after(0.5, function(vel, driver)
+            core.after(0.5, function(vel, driver)
                 -- player:add_velocity(vel)
                 player:set_velocity({0, 0, 0})
             end, v, player)
         end
     end
     -- cleanup old jetpack
-    for i, obj in ipairs(minetest.get_objects_inside_radius(pos, 0.5)) do
+    for i, obj in ipairs(core.get_objects_inside_radius(pos, 0.5)) do
         if (obj ~= player) then
             local parachute = obj
             if (parachute ~= nil) then
@@ -152,7 +152,7 @@ minetest.register_on_joinplayer(function(player)
     end
 end)
 
-minetest.register_on_leaveplayer(function(player)
+core.register_on_leaveplayer(function(player)
     -- remove stale jetpack data
     local playername = player:get_player_name()
     if (jetpacks[playername] ~= nil) then
@@ -161,8 +161,8 @@ minetest.register_on_leaveplayer(function(player)
     end
 end)
 
-minetest.register_on_shutdown(function()
-    local players = minetest.get_connected_players()
+core.register_on_shutdown(function()
+    local players = core.get_connected_players()
     for i, player in ipairs(players) do
         -- remove loaded jetpack data
         local playername = player:get_player_name()
@@ -178,16 +178,16 @@ ctg_jetpack.detach_object = function(self, clear_jetpack)
     self.object:set_detach()
     self.object:remove()
     if clear_jetpack and self._driver then
-        ctg_jetpack.set_player_wearing(self._driver, false, false, false, false, nil, nil)
+        ctg_jetpack.mod_player_wearing(self._driver, false, false, false, false, nil, nil)
         remove_jetpack(self._driver)
         otherworlds.gravity.reset(self._driver)
     end
-    -- minetest.log('detach_object...')
+    -- core.log('detach_object...')
 end
 
 local function sound_play(self, soundref, instance)
     instance.time = 0
-    instance.handle = minetest.sound_play(soundref.name, {
+    instance.handle = core.sound_play(soundref.name, {
         gain = soundref.gain,
         pitch = soundref.pitch + math.random(-0.01, 0.01),
         object = self.object
@@ -198,10 +198,10 @@ local function sound_stop(handle, fade)
     if not handle then
         return
     end
-    if fade and minetest.sound_fade ~= nil then
-        minetest.sound_fade(handle, 1, 0)
+    if fade and core.sound_fade ~= nil then
+        core.sound_fade(handle, 1, 0)
     else
-        minetest.sound_stop(handle)
+        core.sound_stop(handle)
     end
 end
 
@@ -241,7 +241,7 @@ ctg_jetpack.do_sounds = function(self)
         end
 
         if not self._driver and self._sounds.engine.handle then
-            minetest.sound_stop(self._sounds.engine.handle)
+            core.sound_stop(self._sounds.engine.handle)
             self._sounds.engine.handle = nil
         end
     else
@@ -267,14 +267,14 @@ ctg_jetpack.on_death = function(self, nothing)
         physical = false
     })
     sound_stop_all(self)
-    minetest.sound_play("sum_jetpack_fold", {
+    core.sound_play("sum_jetpack_fold", {
         gain = 1,
         object = self.object
     })
     local v = self.object:get_velocity()
     v = vector.multiply(v, 0.01)
     if self._driver then
-        minetest.after(0.01, function(vel, driver)
+        core.after(0.01, function(vel, driver)
             driver:add_velocity(vel)
             otherworlds.gravity.reset(driver)
         end, v, self._driver)
@@ -351,9 +351,9 @@ ctg_jetpack.get_movement = function(self)
     v = vector.multiply(dir, forward)
 
     if right ~= 0 then
-        local yaw = minetest.dir_to_yaw(dir)
+        local yaw = core.dir_to_yaw(dir)
         yaw = yaw - (right * (math.pi / 2))
-        yaw = minetest.yaw_to_dir(yaw)
+        yaw = core.yaw_to_dir(yaw)
         v = vector.add(v, yaw)
     end
 
@@ -568,7 +568,7 @@ ctg_jetpack.do_particles = function(self, dtime)
     local d = self._driver:get_look_dir()
     v = vector.multiply(v, vector.normalize(d))
     v = vector.normalize(v)
-    local sum_air_currents = minetest.get_modpath("sum_air_currents") ~= nil
+    local sum_air_currents = core.get_modpath("sum_air_currents") ~= nil
     if sum_air_currents then
         sum_air_currents.get_wind(p)
     end
@@ -582,13 +582,13 @@ ctg_jetpack.do_particles = function(self, dtime)
     elseif self._style == "titanium" then
         particles = particles_4
     end
-    -- minetest.log("vel y: " .. vel.y)
+    -- core.log("vel y: " .. vel.y)
     for i = -1, 0 do
         if i == 0 then
             i = 1
         end
         local yaw = self.object:get_yaw() + (exhaust.yaw * i) + math.pi
-        yaw = minetest.yaw_to_dir(yaw)
+        yaw = core.yaw_to_dir(yaw)
         yaw = vector.multiply(yaw, exhaust.dist)
         local ex = vector.add(p, yaw)
         if vel.y < -6 then
@@ -611,7 +611,7 @@ ctg_jetpack.do_particles = function(self, dtime)
                     if (math.random() >= 0.6) then
                         texture = prt.texture_r180
                     end
-                    minetest.add_particle({
+                    core.add_particle({
                         pos = ex,
                         velocity = vector.add(v, vector.add(wind_vel, {
                             x = rx,
@@ -644,7 +644,7 @@ ctg_jetpack.do_particles = function(self, dtime)
                     if (math.random() >= 0.6) then
                         texture = prt.texture_r180
                     end
-                    minetest.add_particle({
+                    core.add_particle({
                         pos = exm,
                         velocity = vector.add(v, vector.add(wind_vel, {
                             x = rx,
@@ -673,7 +673,7 @@ ctg_jetpack.do_particles = function(self, dtime)
         if moving and math.random() >= 0.46 then
             local rx = math.random(-0.01, 0.01) * 0.6
             local rz = math.random(-0.01, 0.01) * 0.6
-            minetest.add_particle({
+            core.add_particle({
                 pos = ex,
                 velocity = vector.add(v, vector.add(wind_vel, {
                     x = rx,
@@ -704,14 +704,14 @@ local function has_in_range(p, c_name, rng, thres)
     }
     local pos1 = vector.subtract(pos, range)
     local pos2 = vector.add(pos, range)
-    local nodes = minetest.find_nodes_in_area(pos1, pos2, {c_name})
+    local nodes = core.find_nodes_in_area(pos1, pos2, {c_name})
     return #nodes >= thres
 end
 
 local function generate_from_solar(self, dtime)
     if self._itemstack then
         local wear = self._itemstack:get_wear()
-        if wear and wear > 60100 then
+        if wear and wear > 61400 then
             return
         end
         if wear == 0 then
@@ -726,17 +726,17 @@ local function generate_from_solar(self, dtime)
             local armor_list = armor_inv:get_list("armor")
             local jetpack = nil
             local pos = player:get_pos()
-            local _time = minetest.get_timeofday() * 24000
+            local _time = core.get_timeofday() * 24000
             local light = 0
             if (_time > 0) then
-                light = minetest.get_node_light(pos, _time / 24000)
+                light = core.get_node_light(pos, _time / 24000)
                 if light == nil then
                     light = 0
                 end
                 if (light < 12) then
-                    -- minetest.log("Not enough light! " .. light)
+                    -- core.log("Not enough light! " .. light)
                     if self._generating then
-                        ctg_jetpack.set_player_wearing(player, true, true, false, false, armor_list, armor_inv, true)
+                        ctg_jetpack.mod_player_wearing(player, true, true, false, false, armor_list, armor_inv, true)
                         self._generating = false
                     end
                     return false
@@ -754,7 +754,7 @@ local function generate_from_solar(self, dtime)
                 if not stack:is_empty() then
                     local name = stack:get_name()
                     local jp = player:get_armor_groups(name, "jetpack")
-                    local ig = minetest.get_item_group(name, "armor_jetpack")
+                    local ig = core.get_item_group(name, "armor_jetpack")
                     if jp ~= nil and ig ~= nil and ig >= 9 then
                         jetpack = stack
                         index = i
@@ -764,16 +764,16 @@ local function generate_from_solar(self, dtime)
             end
             local amt = 25 + (light - 10) * dtime * 2.5
             local update = false
-            if (jetpack ~= nil and light >= 12 and amt >= 5 and jetpack:get_wear() < 60100) then
+            if (jetpack ~= nil and light >= 12 and amt >= 5 and jetpack:get_wear() < 61400) then
                 for i, stack in ipairs(armor_inv:get_list("armor")) do
                     if not stack:is_empty() then
                         local name = stack:get_name()
-                        local addon_module = minetest.get_item_group(name, "armor_module")
+                        local addon_module = core.get_item_group(name, "armor_module")
                         if (addon_module ~= nil) and addon_module == 3 then
-                            if (stack:get_wear() < 60100) then
+                            if (stack:get_wear() < 61400) then
                                 local wear = self._itemstack:get_wear()
                                 if (wear - amt >= 0) then
-                                    -- minetest.log("Repaired!!  wear: " .. wear)
+                                    -- core.log("Repaired!!  wear: " .. wear)
                                     armor:damage(player, i, stack, amt * 0.05)
                                     armor:damage(player, index, self._itemstack, -(amt))
                                     update = true
@@ -790,7 +790,7 @@ local function generate_from_solar(self, dtime)
             if (update) then
                 ctg_jetpack.set_player_wearing(player, true, true, false, self._generating, armor_list, armor_inv)
             elseif self._generating then
-                ctg_jetpack.set_player_wearing2(player, true, true, false, false, armor_list, armor_inv, true)
+                ctg_jetpack.mod_player_wearing(player, true, true, false, false, armor_list, armor_inv, true)
                 self._generating = false
             end
             return true
@@ -800,7 +800,7 @@ end
 
 local move_speed = 25
 ctg_jetpack.max_use_time = 30
-ctg_jetpack.wear_per_sec = 60100 / ctg_jetpack.max_use_time
+ctg_jetpack.wear_per_sec = 61400 / ctg_jetpack.max_use_time
 -- warn the player 5 sec before fuel runs out
 ctg_jetpack.wear_warn_level = (ctg_jetpack.max_use_time - 5) * ctg_jetpack.wear_per_sec
 
@@ -814,7 +814,7 @@ function ctg_jetpack.setup(style)
     elseif style == "titanium" then
         ctg_jetpack.max_use_time = 150
     end
-    ctg_jetpack.wear_per_sec = 60100 / ctg_jetpack.max_use_time
+    ctg_jetpack.wear_per_sec = 61400 / ctg_jetpack.max_use_time
     -- warn the player a few sec before fuel runs out
     ctg_jetpack.wear_warn_level = (ctg_jetpack.max_use_time - 10) * ctg_jetpack.wear_per_sec
 end
@@ -825,14 +825,14 @@ local disable_jetpack = function(self)
         physical = false
     })
     sound_stop_all(self)
-    minetest.sound_play("sum_jetpack_fold", {
+    core.sound_play("sum_jetpack_fold", {
         gain = 1,
         object = self.object
     })
     local v = self.object:get_velocity()
     if self._driver then
         v = vector.multiply(v, 0.6)
-        minetest.after(0.01, function(vel, driver)
+        core.after(0.01, function(vel, driver)
             if driver then
                 driver:add_velocity(vel)
                 otherworlds.gravity.reset(driver)
@@ -846,8 +846,8 @@ local disable_jetpack = function(self)
             local name = stack:get_name()
             local wear = stack:get_wear()
             if name:sub(1, 12) == "ctg_jetpack:" then
-                ctg_jetpack.set_player_wearing(self._driver, true, wear < 60100, false, self._generating,
-                    armor_list, armor_inv)
+                ctg_jetpack.mod_player_wearing(self._driver, true, wear < 61400, false, self._generating, armor_list,
+                    armor_inv)
             end
         end
     end
@@ -856,7 +856,7 @@ end
 
 ctg_jetpack.on_step = function(self, dtime)
     if not self._driver and self._age > 1 then
-        -- minetest.log("has no driver.. ")
+        -- core.log("has no driver.. ")
         self.object:remove()
         return
     end
@@ -866,8 +866,8 @@ ctg_jetpack.on_step = function(self, dtime)
         return
     end
     local p = self.object:get_pos()
-    local node_floor = minetest.get_node(vector.offset(p, 0, 0.25, 0))
-    local t_node = minetest.registered_nodes[node_floor.name]
+    local node_floor = core.get_node(vector.offset(p, 0, 0.25, 0))
+    local t_node = core.registered_nodes[node_floor.name]
     local move = false
     local jump = false
     if self._driver and self._driver:is_player() and not (t_node.climbable or t_node.groups['liquid']) then
@@ -887,14 +887,14 @@ ctg_jetpack.on_step = function(self, dtime)
     if self._age > 1 and jump and not self._active and self._itemstack ~= nil then
         local wear = 1
         if self._itemstack then
-            wear = self._itemstack:get_wear()    
+            wear = self._itemstack:get_wear()
         end
         if self._press > 0.300 and wear and wear < 60000 then
             if (self._driver and self._driver:get_hp() <= 0) then
                 self.object:remove()
                 return
             end
-            --if (self._driver and self._driver:get_attach() and #self._driver:get_attach() > 0) then
+            -- if (self._driver and self._driver:get_attach() and #self._driver:get_attach() > 0) then
             if (self._driver and self._driver:get_attach()) then
                 return
             end
@@ -906,7 +906,7 @@ ctg_jetpack.on_step = function(self, dtime)
             self._press = 0
             self._age = 1
             ctg_jetpack.apply_gravity(self._driver, 0.05)
-            minetest.sound_play("sum_jetpack_flame_start", {
+            core.sound_play("sum_jetpack_flame_start", {
                 gain = 0.3,
                 object = self.object
             })
@@ -928,7 +928,7 @@ ctg_jetpack.on_step = function(self, dtime)
     end
     if self._itemstack then
         local wear = self._itemstack:get_wear()
-        if wear and wear > 60100 then
+        if wear and wear > 61400 then
             return
         end
         if self._driver and self._driver:is_player() then
@@ -939,8 +939,8 @@ ctg_jetpack.on_step = function(self, dtime)
                 if not stack:is_empty() then
                     local name = stack:get_name()
                     wear = stack:get_wear()
-                    if name:sub(1, 20) == "ctg_jetpack:jetpack_" and wear + ctg_jetpack.wear_per_sec * dtime < 60100 then
-                        ctg_jetpack.set_player_wearing(player, true, true, true, self._generating, armor_list, armor_inv)
+                    if name:sub(1, 20) == "ctg_jetpack:jetpack_" and wear + ctg_jetpack.wear_per_sec * dtime < 61400 then
+                        ctg_jetpack.mod_player_wearing(player, true, true, true, self._generating, armor_list, armor_inv)
                         if jump then
                             armor:damage(player, i, stack, (ctg_jetpack.wear_per_sec * dtime) * 4.0)
                         elseif move then
@@ -952,14 +952,14 @@ ctg_jetpack.on_step = function(self, dtime)
                         break
                     elseif name:sub(1, 20) == "ctg_jetpack:jetpack_" then
                         if (self._fuel > 0) then
-                            local warn_sound = minetest.sound_play("sum_jetpack_warn", {
+                            local warn_sound = core.sound_play("sum_jetpack_warn", {
                                 gain = 0.3,
                                 pitch = 0.5,
                                 object = self.object
                             })
                         end
                         self._itemstack = stack
-                        ctg_jetpack.set_player_wearing(player, true, false, false, self._generating, armor_list,
+                        ctg_jetpack.mod_player_wearing(player, true, false, false, self._generating, armor_list,
                             armor_inv)
                         self._fuel = ctg_jetpack.max_use_time - (wear / ctg_jetpack.wear_per_sec)
                         self._active = false
@@ -972,7 +972,7 @@ ctg_jetpack.on_step = function(self, dtime)
         end
 
         self._fuel = ctg_jetpack.max_use_time - (wear / ctg_jetpack.wear_per_sec)
-        if wear >= 60100 then
+        if wear >= 61400 then
             self._disabled = true
             -- ctg_jetpack.on_death(self, nil)
             -- self.object:remove()
@@ -982,13 +982,13 @@ ctg_jetpack.on_step = function(self, dtime)
             end
             return false
         elseif wear >= ctg_jetpack.wear_warn_level and (not self._flags.warn) then
-            minetest.chat_send_player(self._driver:get_player_name(), S("Your @1 is almost out of fuel!", "Jetpack"))
-            local warn_sound = minetest.sound_play("sum_jetpack_warn", {
+            core.chat_send_player(self._driver:get_player_name(), S("Your @1 is almost out of fuel!", "Jetpack"))
+            local warn_sound = core.sound_play("sum_jetpack_warn", {
                 gain = 0.5,
                 object = self.object
             })
-            if warn_sound and minetest.sound_fade ~= nil then
-                minetest.sound_fade(warn_sound, 0.1, 0)
+            if warn_sound and core.sound_fade ~= nil then
+                core.sound_fade(warn_sound, 0.1, 0)
             end
             self._flags.warn = true
         end
@@ -998,7 +998,9 @@ ctg_jetpack.on_step = function(self, dtime)
         ctg_jetpack.do_sounds(self)
     end
 
-    ctg_jetpack.do_particles(self, dtime)
+    if math.random(0,2) >= 1 then -- 66% chance...
+        ctg_jetpack.do_particles(self, dtime)
+    end
 
     if self._active and t_node and (t_node.climbable or t_node.groups['liquid']) then
         -- disable jetpack on ladders..
@@ -1013,7 +1015,7 @@ ctg_jetpack.on_step = function(self, dtime)
     end
 
     if self._driver then
-        self.object:set_yaw(minetest.dir_to_yaw(self._driver:get_look_dir()))
+        self.object:set_yaw(core.dir_to_yaw(self._driver:get_look_dir()))
     end
 
     local a = vector.new()
@@ -1023,7 +1025,7 @@ ctg_jetpack.on_step = function(self, dtime)
     local move_vect = ctg_jetpack.get_movement(self)
     a = vector.multiply(move_vect, move_mult)
 
-    local sum_air_currents = minetest.get_modpath("sum_air_currents") ~= nil
+    local sum_air_currents = core.get_modpath("sum_air_currents") ~= nil
     if sum_air_currents and sum_air_currents.get_wind ~= nil then
         a = vector.add(a, vector.multiply(sum_air_currents.get_wind(p), dtime * 0.1))
     end
@@ -1089,7 +1091,7 @@ local function register_jetpack_entity(style, speed)
         _lastpos = {}
     }
 
-    minetest.register_entity("ctg_jetpack:jetpack_" .. style .. "_entity", entity)
+    core.register_entity("ctg_jetpack:jetpack_" .. style .. "_entity", entity)
 end
 
 register_jetpack_entity("iron", 1.10)

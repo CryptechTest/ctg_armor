@@ -1,126 +1,53 @@
--- Wool Craftings
-if minetest.get_modpath("wool") then
 
-    minetest.register_craft({
-        output = "ctg_spacesuit:helmet_gold",
-        recipe = {{"default:gold_ingot", "default:glass", "default:gold_ingot"},
-                  {"default:gold_ingot", "default:glass", "default:gold_ingot"},
-                  {"group:wool", "default:goldblock", "group:wool"}}
+-- recipe registration
+local function register_recipe(_type, ingot, block, soft)
+    local mod = "ctg_spacesuit"
+    core.register_craft({
+        output = mod .. ":helmet_" .. _type,
+        recipe = {{ingot, "default:glass", ingot},
+                  {ingot, "default:glass", ingot},
+                  {soft, block, soft}}
     })
-
-    minetest.register_craft({
-        output = "ctg_spacesuit:chestplate_gold",
-        recipe = {{"default:gold_ingot", "default:mese", "default:gold_ingot"},
-                  {"default:gold_ingot", "group:wool", "default:gold_ingot"},
-                  {"default:gold_ingot", "default:goldblock", "default:gold_ingot"}}
+    core.register_craft({
+        output = mod .. ":chestplate_" .. _type,
+        recipe = {{ingot, "default:mese", ingot},
+                  {ingot, soft, ingot},
+                  {ingot, soft, ingot}}
     })
-
-    minetest.register_craft({
-        output = "ctg_spacesuit:pants_gold",
-        recipe = {{"default:gold_ingot", "group:wool", "default:gold_ingot"},
-                  {"default:gold_ingot", "group:wool", "default:gold_ingot"},
-                  {"default:gold_ingot", "group:wool", "default:gold_ingot"}}
+    core.register_craft({
+        output = mod .. ":pants_" .. _type,
+        recipe = {{ingot, soft, ingot},
+                  {ingot, soft, ingot},
+                  {ingot, soft, ingot}}
     })
-
-    minetest.register_craft({
-        output = "ctg_spacesuit:boots_gold",
-        recipe = {{"group:wool", "", "group:wool"}, {"default:gold_ingot", "group:wool", "default:gold_ingot"},
-                  {"default:gold_ingot", "group:wool", "default:gold_ingot"}}
-    })
-
-    minetest.register_craft({
-        output = "ctg_spacesuit:helmet_titanium",
-        recipe = {{"ctg_world:titanium_ingot", "default:glass", "ctg_world:titanium_ingot"},
-                  {"ctg_world:titanium_ingot", "default:glass", "ctg_world:titanium_ingot"},
-                  {"group:wool", "ctg_world:titanium_block", "group:wool"}}
-    })
-
-    minetest.register_craft({
-        output = "ctg_spacesuit:chestplate_titanium",
-        recipe = {{"ctg_world:titanium_ingot", "default:mese", "ctg_world:titanium_ingot"},
-                  {"ctg_world:titanium_ingot", "group:wool", "ctg_world:titanium_ingot"},
-                  {"ctg_world:titanium_ingot", "ctg_world:titanium_block", "ctg_world:titanium_ingot"}}
-    })
-
-    minetest.register_craft({
-        output = "ctg_spacesuit:pants_titanium",
-        recipe = {{"ctg_world:titanium_ingot", "group:wool", "ctg_world:titanium_ingot"},
-                  {"ctg_world:titanium_ingot", "group:wool", "ctg_world:titanium_ingot"},
-                  {"ctg_world:titanium_ingot", "group:wool", "ctg_world:titanium_ingot"}}
-    })
-
-    minetest.register_craft({
-        output = "ctg_spacesuit:boots_titanium",
-        recipe = {{"group:wool", "", "group:wool"},
-                  {"ctg_world:titanium_ingot", "group:wool", "ctg_world:titanium_ingot"},
-                  {"ctg_world:titanium_ingot", "group:wool", "ctg_world:titanium_ingot"}}
+    core.register_craft({
+        output = mod .. ":boots_" .. _type,
+        recipe = {{soft, "", soft},
+                  {ingot, soft, ingot},
+                  {ingot, soft, ingot}}
     })
 end
 
+-- Wool Craftings
+if core.get_modpath("wool") then
+    -- gold spacesuit
+    register_recipe("gold", "default:gold_ingot", "default:goldblock", "wool:yellow")
+    -- titanium spacesuit
+    register_recipe("titanium", "ctg_world:titanium_ingot", "ctg_world:titanium_block", "wool:cyan")
+end
+
 -- Cotton Craftings
-
-if minetest.get_modpath("x_farming") then
-
-    minetest.register_craft({
-        output = "ctg_spacesuit:helmet_gold",
-        recipe = {{"default:gold_ingot", "default:glass", "default:gold_ingot"},
-                  {"default:gold_ingot", "default:glass", "default:gold_ingot"},
-                  {"x_farming:pillow_yellow", "default:goldblock", "x_farming:pillow_yellow"}}
-    })
-
-    minetest.register_craft({
-        output = "ctg_spacesuit:chestplate_gold",
-        recipe = {{"default:gold_ingot", "default:mese", "default:gold_ingot"},
-                  {"default:gold_ingot", "x_farming:pillow_yellow", "default:gold_ingot"},
-                  {"default:gold_ingot", "default:goldblock", "default:gold_ingot"}}
-    })
-
-    minetest.register_craft({
-        output = "ctg_spacesuit:pants_gold",
-        recipe = {{"default:gold_ingot", "x_farming:pillow_yellow", "default:gold_ingot"},
-                  {"default:gold_ingot", "x_farming:pillow_yellow", "default:gold_ingot"},
-                  {"default:gold_ingot", "x_farming:pillow_yellow", "default:gold_ingot"}}
-    })
-
-    minetest.register_craft({
-        output = "ctg_spacesuit:boots_gold",
-        recipe = {{"x_farming:pillow_yellow", "", "x_farming:pillow_yellow"},
-                  {"default:gold_ingot", "x_farming:pillow_yellow", "default:gold_ingot"},
-                  {"default:gold_ingot", "x_farming:pillow_yellow", "default:gold_ingot"}}
-    })
-
-    minetest.register_craft({
-        output = "ctg_spacesuit:helmet_titanium",
-        recipe = {{"ctg_world:titanium_ingot", "default:glass", "ctg_world:titanium_ingot"},
-                  {"ctg_world:titanium_ingot", "default:glass", "ctg_world:titanium_ingot"},
-                  {"x_farming:pillow_blue", "ctg_world:titanium_block", "x_farming:pillow_blue"}}
-    })
-
-    minetest.register_craft({
-        output = "ctg_spacesuit:chestplate_titanium",
-        recipe = {{"ctg_world:titanium_ingot", "default:mese", "ctg_world:titanium_ingot"},
-                  {"ctg_world:titanium_ingot", "x_farming:pillow_blue", "ctg_world:titanium_ingot"},
-                  {"ctg_world:titanium_ingot", "ctg_world:titanium_block", "ctg_world:titanium_ingot"}}
-    })
-
-    minetest.register_craft({
-        output = "ctg_spacesuit:pants_titanium",
-        recipe = {{"ctg_world:titanium_ingot", "x_farming:pillow_blue", "ctg_world:titanium_ingot"},
-                  {"ctg_world:titanium_ingot", "x_farming:pillow_blue", "ctg_world:titanium_ingot"},
-                  {"ctg_world:titanium_ingot", "x_farming:pillow_blue", "ctg_world:titanium_ingot"}}
-    })
-
-    minetest.register_craft({
-        output = "ctg_spacesuit:boots_titanium",
-        recipe = {{"x_farming:pillow_blue", "", "x_farming:pillow_blue"},
-                  {"ctg_world:titanium_ingot", "x_farming:pillow_blue", "ctg_world:titanium_ingot"},
-                  {"ctg_world:titanium_ingot", "x_farming:pillow_blue", "ctg_world:titanium_ingot"}}
-    })
+if core.get_modpath("x_farming") then
+    -- gold spacesuit
+    register_recipe("gold", "default:gold_ingot", "default:goldblock", "x_farming:pillow_yellow")
+    -- titanium spacesuit
+    register_recipe("titanium", "ctg_world:titanium_ingot", "ctg_world:titanium_block", "x_farming:pillow_blue")
+    register_recipe("titanium", "ctg_world:titanium_ingot", "ctg_world:titanium_block", "x_farming:pillow_cyan")
 end
 
 -- spacesuit repair recipes
 local function repair_recipe(partname)
-    minetest.register_craft({
+    core.register_craft({
         type = "shapeless",
         output = partname,
         recipe = {"vacuum:air_bottle", partname},
@@ -128,7 +55,7 @@ local function repair_recipe(partname)
     })
 end
 
-if minetest.get_modpath("vacuum") then
+if core.get_modpath("vacuum") then
     repair_recipe("ctg_spacesuit:helmet_gold")
     repair_recipe("ctg_spacesuit:chestplate_gold")
     repair_recipe("ctg_spacesuit:pants_gold")
@@ -139,7 +66,7 @@ if minetest.get_modpath("vacuum") then
     repair_recipe("ctg_spacesuit:pants_titanium")
     repair_recipe("ctg_spacesuit:boots_titanium")
 
-    if minetest.get_modpath("unified_inventory") then
+    if core.get_modpath("unified_inventory") then
         unified_inventory.register_craft({
             type = "filling",
             output = "ctg_spacesuit:helmet_gold 1 1",

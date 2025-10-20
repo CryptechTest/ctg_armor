@@ -1,6 +1,6 @@
-local S = minetest.get_translator(minetest.get_current_modname())
+local S = core.get_translator(core.get_current_modname())
 
-minetest.register_craftitem("ctg_jetpack:jetpack_fuel_rocket", {
+core.register_craftitem("ctg_jetpack:jetpack_fuel_rocket", {
     description = S("Jetpack Fuel"),
     _tt_help = S("Used for basic jetpacks"),
     _doc_items_longdesc = S("Fuel for a jetpack."),
@@ -12,7 +12,7 @@ minetest.register_craftitem("ctg_jetpack:jetpack_fuel_rocket", {
     }
 })
 
-minetest.register_craftitem("ctg_jetpack:jetpack_fuel_hydrogen", {
+core.register_craftitem("ctg_jetpack:jetpack_fuel_hydrogen", {
     description = S("Hydrogen Jetpack Fuel"),
     _tt_help = S("Used for advanced jetpacks"),
     _doc_items_longdesc = S("Fuel for a jetpack."),

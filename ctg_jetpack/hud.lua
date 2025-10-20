@@ -101,7 +101,6 @@ local setup_hud = function(player)
         number = 0xFF0000
     })
 
-    
     hud_data.alt_label = player:hud_add({
         hud_elem_type = "text",
         position = HUD_POSITION,
@@ -176,7 +175,7 @@ local update_hud = function(player, has_fuel, is_running, has_solar, armor_list,
         end
     end
 
-    local factor_full = 1 - (max_wear / 60100)
+    local factor_full = 1 - (max_wear / 61400)
     local prcnt_full = math.floor(factor_full * 10000) * 0.01;
 
     if is_running then
@@ -230,7 +229,7 @@ local update_hud = function(player, has_fuel, is_running, has_solar, armor_list,
 
 end
 
-ctg_jetpack.set_altitude_hud = function(player) 
+ctg_jetpack.set_altitude_hud = function(player)
     local playername = player:get_player_name()
     local hud_data = hud[playername]
     if not hud_data then
@@ -245,18 +244,13 @@ ctg_jetpack.set_altitude_hud = function(player)
     end
 end
 
-minetest.register_on_leaveplayer(function(player)
+core.register_on_leaveplayer(function(player)
     -- remove stale hud data
     local playername = player:get_player_name()
     hud[playername] = nil
 end)
 
-ctg_jetpack.set_player_wearing = function(player, has_jetpack, has_fuel, is_active, has_solar, armor_list, armor_inv)
-    return ctg_jetpack.set_player_wearing2(player, has_jetpack, has_fuel, is_active, has_solar, armor_list, armor_inv,
-        false)
-end
-
-ctg_jetpack.set_player_wearing2 = function(player, has_jetpack, has_fuel, is_active, has_solar, armor_list, armor_inv,
+ctg_jetpack.mod_player_wearing = function(player, has_jetpack, has_fuel, is_active, has_solar, armor_list, armor_inv,
     clear)
     local playername = player:get_player_name()
     local hud_data = hud[playername]
@@ -286,9 +280,41 @@ ctg_jetpack.set_player_wearing2 = function(player, has_jetpack, has_fuel, is_act
     elseif not hud_data and has_jetpack and has_helmet then
         -- player started wearing
         setup_hud(player)
-        minetest.after(0.1, function()
+        core.after(0.1, function()
             update_hud(player, has_fuel, is_active, has_solar, armor_list, clear)
         end)
 
     end
+end
+
+ctg_jetpack.set_player_wearing = function(player, has_jetpack, has_fuel, is_active, has_solar, armor_list, armor_inv)
+    return ctg_jetpack.mod_player_wearing(player, has_jetpack, has_fuel, is_active, has_solar, armor_list, armor_inv,
+        false)
+end
+
+ctg_jetpack.set_player_jetpack_hud = function(player)
+    local _, armor_inv = armor.get_valid_player(armor, player, "[jetpack]")
+    local armor_list = armor_inv:get_list("armor")
+    local wear = 0
+    local _has = false
+    for _, item in pairs(armor_list) do
+        if item:get_name() and string.find(item:get_name(), "ctg_jetpack:jetpack_copper") then
+            wear = math.max(wear, item:get_wear())
+            _has = true
+            break
+        elseif item:get_name() and string.find(item:get_name(), "ctg_jetpack:jetpack_iron") then
+            wear = math.max(wear, item:get_wear())
+            _has = true
+            break
+        elseif item:get_name() and string.find(item:get_name(), "ctg_jetpack:jetpack_bronze") then
+            wear = math.max(wear, item:get_wear())
+            _has = true
+            break
+        elseif item:get_name() and string.find(item:get_name(), "ctg_jetpack:jetpack_titanium") then
+            wear = math.max(wear, item:get_wear())
+            _has = true
+            break
+        end
+    end
+    ctg_jetpack.set_player_wearing(player, _has, wear < 61400, false, armor_list, armor_inv)
 end
