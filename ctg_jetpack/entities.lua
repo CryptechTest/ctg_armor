@@ -31,9 +31,36 @@ local update_jetpack = function(player, jetpack)
     jetpack_data.jetpack = jetpack
 end
 
+local get_jetpack = function(player)
+    local playername = player:get_player_name()
+    local jetpack_data = jetpacks[playername]
+    return jetpack_data.jetpack
+end
+
+ctg_jetpack.is_setup_jetpack = is_setup_jetpack
+ctg_jetpack.update_jetpack = update_jetpack
+ctg_jetpack.get_jetpack = get_jetpack
+
+--- get jetpack fuel use time vars from style
+function ctg_jetpack.get_use_time(style)
+    local max_use_time = 30
+    if style == "copper" then
+        max_use_time = ctg_jetpack.max_use_time_copper
+    elseif style == "iron" then
+        max_use_time = ctg_jetpack.max_use_time_iron
+    elseif style == "bronze" then
+        max_use_time = ctg_jetpack.max_use_time_bronze
+    elseif style == "titanium" then
+        max_use_time = ctg_jetpack.max_use_time_titanium
+    end
+    local wear_per_sec = 61400 / max_use_time
+    -- warn the player a few sec before fuel runs out
+    local wear_warn_level = (max_use_time - 10) * wear_per_sec
+    return max_use_time, wear_per_sec, wear_warn_level
+end
+
 -- Staticdata handling because objects may want to be reloaded
 function ctg_jetpack.get_staticdata(self)
-    ctg_jetpack.setup(self._style)
     local itemstack = "ctg_jetpack:jetpack_" .. self._style
     if self._itemstack then
         itemstack = self._itemstack:to_table()
@@ -52,7 +79,7 @@ function ctg_jetpack.on_activate(self, staticdata, dtime_s)
     core.after(0.01, function()
         if self._driver and self._driver:is_player() and self._itemstack == nil then
             local player = self._driver
-            local _, armor_inv = armor.get_valid_player(armor, player, "[jetpack]")
+            local _, armor_inv = armor:get_valid_player(player, "[jetpack]")
             local armor_list = armor_inv:get_list("armor")
             if armor_list then
                 for i, stack in pairs(armor_inv:get_list("armor")) do
@@ -722,7 +749,7 @@ local function generate_from_solar(self, dtime)
         end
         if self._driver and self._driver:is_player() then
             local player = self._driver
-            local _, armor_inv = armor.get_valid_player(armor, player, "[jetpack]")
+            local _, armor_inv = armor:get_valid_player(player, "[jetpack]")
             local armor_list = armor_inv:get_list("armor")
             local jetpack = nil
             local pos = player:get_pos()
@@ -798,27 +825,6 @@ local function generate_from_solar(self, dtime)
     end
 end
 
-local move_speed = 25
-ctg_jetpack.max_use_time = 30
-ctg_jetpack.wear_per_sec = 61400 / ctg_jetpack.max_use_time
--- warn the player 5 sec before fuel runs out
-ctg_jetpack.wear_warn_level = (ctg_jetpack.max_use_time - 5) * ctg_jetpack.wear_per_sec
-
-function ctg_jetpack.setup(style)
-    if style == "copper" then
-        ctg_jetpack.max_use_time = 70
-    elseif style == "iron" then
-        ctg_jetpack.max_use_time = 90
-    elseif style == "bronze" then
-        ctg_jetpack.max_use_time = 110
-    elseif style == "titanium" then
-        ctg_jetpack.max_use_time = 150
-    end
-    ctg_jetpack.wear_per_sec = 61400 / ctg_jetpack.max_use_time
-    -- warn the player a few sec before fuel runs out
-    ctg_jetpack.wear_warn_level = (ctg_jetpack.max_use_time - 10) * ctg_jetpack.wear_per_sec
-end
-
 local disable_jetpack = function(self)
     self._active = false
     self.object:set_properties({
@@ -839,7 +845,7 @@ local disable_jetpack = function(self)
             end
         end, v, self._driver)
     end
-    local _, armor_inv = armor.get_valid_player(armor, self._driver, "[jetpack]")
+    local _, armor_inv = armor:get_valid_player(self._driver, "[jetpack]")
     local armor_list = armor_inv:get_list("armor")
     for i, stack in pairs(armor_inv:get_list("armor")) do
         if not stack:is_empty() then
@@ -926,6 +932,9 @@ ctg_jetpack.on_step = function(self, dtime)
     if not self._flags.ready and self._age < 1 then
         return
     end
+    local max_use_time = self._fuel_max
+    local wear_per_sec = self._fuel_use
+    local wear_warn_level = self._fuel_warn
     if self._itemstack then
         local wear = self._itemstack:get_wear()
         if wear and wear > 61400 then
@@ -933,20 +942,20 @@ ctg_jetpack.on_step = function(self, dtime)
         end
         if self._driver and self._driver:is_player() then
             local player = self._driver
-            local _, armor_inv = armor.get_valid_player(armor, player, "[jetpack]")
+            local _, armor_inv = armor:get_valid_player(player, "[jetpack]")
             local armor_list = armor_inv:get_list("armor")
             for i, stack in pairs(armor_inv:get_list("armor")) do
                 if not stack:is_empty() then
                     local name = stack:get_name()
                     wear = stack:get_wear()
-                    if name:sub(1, 20) == "ctg_jetpack:jetpack_" and wear + ctg_jetpack.wear_per_sec * dtime < 61400 then
+                    if name:sub(1, 20) == "ctg_jetpack:jetpack_" and wear + wear_per_sec * dtime < 61400 then
                         ctg_jetpack.mod_player_wearing(player, true, true, true, self._generating, armor_list, armor_inv)
                         if jump then
-                            armor:damage(player, i, stack, (ctg_jetpack.wear_per_sec * dtime) * 4.0)
+                            armor:damage(player, i, stack, (wear_per_sec * dtime) * 4.0)
                         elseif move then
-                            armor:damage(player, i, stack, (ctg_jetpack.wear_per_sec * dtime) * 1.5)
+                            armor:damage(player, i, stack, (wear_per_sec * dtime) * 1.5)
                         else
-                            armor:damage(player, i, stack, (ctg_jetpack.wear_per_sec * dtime) * 0.5)
+                            armor:damage(player, i, stack, (wear_per_sec * dtime) * 0.5)
                         end
                         self._itemstack = stack
                         break
@@ -961,7 +970,7 @@ ctg_jetpack.on_step = function(self, dtime)
                         self._itemstack = stack
                         ctg_jetpack.mod_player_wearing(player, true, false, false, self._generating, armor_list,
                             armor_inv)
-                        self._fuel = ctg_jetpack.max_use_time - (wear / ctg_jetpack.wear_per_sec)
+                        self._fuel = max_use_time - (wear / wear_per_sec)
                         self._active = false
                         self._disabled = true
                         otherworlds.gravity.reset(self._driver)
@@ -971,7 +980,7 @@ ctg_jetpack.on_step = function(self, dtime)
             end
         end
 
-        self._fuel = ctg_jetpack.max_use_time - (wear / ctg_jetpack.wear_per_sec)
+        self._fuel = max_use_time - (wear / wear_per_sec)
         if wear >= 61400 then
             self._disabled = true
             -- ctg_jetpack.on_death(self, nil)
@@ -981,7 +990,7 @@ ctg_jetpack.on_step = function(self, dtime)
                 otherworlds.gravity.reset(self._driver)
             end
             return false
-        elseif wear >= ctg_jetpack.wear_warn_level and (not self._flags.warn) then
+        elseif wear >= wear_warn_level and (not self._flags.warn) then
             core.chat_send_player(self._driver:get_player_name(), S("Your @1 is almost out of fuel!", "Jetpack"))
             local warn_sound = core.sound_play("sum_jetpack_warn", {
                 gain = 0.5,
@@ -998,7 +1007,7 @@ ctg_jetpack.on_step = function(self, dtime)
         ctg_jetpack.do_sounds(self)
     end
 
-    if math.random(0,2) >= 1 then -- 66% chance...
+    if math.random(0,2) <= 0 then -- 33% chance...
         ctg_jetpack.do_particles(self, dtime)
     end
 
@@ -1019,7 +1028,7 @@ ctg_jetpack.on_step = function(self, dtime)
     end
 
     local a = vector.new()
-    local move_mult = math.min(6, move_speed * math.min(0.5, dtime) * 0.357 + 0.01)
+    local move_mult = math.min(6, ctg_jetpack.move_speed * math.min(0.5, dtime) * 0.357 + 0.01)
     -- if self._disabled then move_mult = move_mult / 10 end
 
     local move_vect = ctg_jetpack.get_movement(self)
@@ -1050,30 +1059,34 @@ ctg_jetpack.on_step = function(self, dtime)
 end
 
 local function register_jetpack_entity(style, speed)
+    local max_use_time, wear_per_sec, wear_warn_level = ctg_jetpack.get_use_time(style)
     local cbsize = 0.3
     local entity = {
-        physical = false,
-        timer = 0,
-        visual = "mesh",
-        mesh = "sum_jetpack.b3d",
-        textures = {"ctg_jetpack_" .. style .. "_texture.png"},
-        visual_size = {
-            x = 1,
-            y = 1,
-            z = 1
+        initial_properties = {
+            physical = false,
+            collisionbox = {-cbsize, -0, -cbsize, cbsize, cbsize * 6, cbsize},
+            visual = "mesh",
+            mesh = "sum_jetpack.b3d",
+            textures = {"ctg_jetpack_" .. style .. "_texture.png"},
+            visual_size = {
+                x = 1,
+                y = 1,
+                z = 1
+            },
+            pointable = false,
+            timer = 0,
+            immortal = 1,
+            groups = {
+                immortal = 1
+            },
+            armor_groups = {
+                immortal = 1
+            },
         },
-        collisionbox = {-cbsize, -0, -cbsize, cbsize, cbsize * 6, cbsize},
-        pointable = false,
+
         get_staticdata = ctg_jetpack.get_staticdata,
         on_activate = ctg_jetpack.on_activate,
         on_step = ctg_jetpack.on_step,
-        groups = {
-            immortal = 1
-        },
-        armor_groups = {
-            immortal = 1
-        },
-        immortal = 1,
         _style = style,
         _thrower = nil,
         _driver = nil,
@@ -1084,7 +1097,10 @@ local function register_jetpack_entity(style, speed)
         _disabled = false,
         _active = false,
         _flags = {},
-        _fuel = ctg_jetpack.max_use_time,
+        _fuel = max_use_time,
+        _fuel_max = max_use_time,
+        _fuel_use = wear_per_sec,
+        _fuel_warn = wear_warn_level,
         _speed = speed,
         _generating = false,
         _jetpack = 1,

@@ -3,6 +3,14 @@ local S = core.get_translator(core.get_current_modname())
 ctg_jetpack = {}
 ctg_jetpack.hud = {}
 
+ctg_jetpack.move_speed = 25
+ctg_jetpack.max_use_time = 30 -- default 30 seconds
+
+ctg_jetpack.max_use_time_copper = 70
+ctg_jetpack.max_use_time_iron = 90
+ctg_jetpack.max_use_time_bronze = 110
+ctg_jetpack.max_use_time_titanium = 150
+
 -- load files
 local default_path = core.get_modpath("ctg_jetpack")
 
@@ -73,13 +81,22 @@ local function refill_player_jetpack(itemstack, player, pointed_thing)
     local take_bottle = false
     local wear_cut_off = 2500
     local wear = 0
+    local jetpack = nil
     for i, item in ipairs(invs:get_list("armor")) do
+        if not item:is_empty() then
+            local name = item:get_name()
+            local jp = player:get_armor_groups(name, "jetpack")
+            local ig = core.get_item_group(name, "armor_jetpack")
+            if jp ~= nil and ig ~= nil and ig >= 9 then
+                jetpack = item
+            end
+        end
         if item and item:get_name() ~= "" then
             if itemstack:get_name() == "ctg_machines:hydrogen_bottle" then
                 wear_cut_off = 65535 * 0.010
                 if item:get_name() == "ctg_jetpack:jetpack_titanium" then
                     if item:get_wear() > wear_cut_off then
-                        local max_refill = math.min(item:get_wear() * 1.07, 65535)
+                        local max_refill = math.min((item:get_wear() * 2.671) + 1000, 65535)
                         armor:damage(player, i, item, -max_refill)
                         take_bottle = true
                         wear = item:get_wear();
@@ -89,7 +106,7 @@ local function refill_player_jetpack(itemstack, player, pointed_thing)
                 wear_cut_off = 65535 * 0.051
                 if item:get_name() == "ctg_jetpack:jetpack_titanium" then
                     if item:get_wear() > wear_cut_off then
-                        local max_refill = math.min((item:get_wear() * 0.88) + 2000, 65535)
+                        local max_refill = math.max((item:get_wear() * 0.92), 65535)
                         armor:damage(player, i, item, -max_refill)
                         take_bottle = true
                         wear = item:get_wear();
@@ -127,8 +144,16 @@ local function refill_player_jetpack(itemstack, player, pointed_thing)
         end
     end
     if take_bottle then
+        -- remove item from hand
         itemstack:set_count(itemstack:get_count() - 1)
         give_or_drop_item(player, "vessels:steel_bottle")
+        -- update jetpack...
+        if jetpack then
+            local jp = ctg_jetpack.get_jetpack(player);
+            jp._fuel = jp._fuel_max - (wear / jp._fuel_use)
+            jp._itemstack = jetpack
+            ctg_jetpack.update_jetpack(player, jp)
+        end
         -- update hud
         ctg_jetpack.set_player_jetpack_hud(player)
         -- play sound
