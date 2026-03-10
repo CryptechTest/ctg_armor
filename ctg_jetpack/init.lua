@@ -261,6 +261,7 @@ function ctg_jetpack.register_jetpack(style)
     end
     armor:register_armor("ctg_jetpack:jetpack_" .. style, {
         description = S(firstToUpper(style) .. " Jetpack"),
+        short_description = S(firstToUpper(style) .. " Jetpack"),
         -- _tt_help = S("About 60 seconds of use per fuel"),
         _tt_help = S("Uses fuel to fly around"),
         _doc_items_longdesc = S("Can be used to fly."),
@@ -292,7 +293,7 @@ function ctg_jetpack.register_jetpack(style)
                 return false
             end
             if stack:get_wear() >= 61400 and user then
-                core.chat_send_player(user:get_player_name(), S("Your @1 is out of fuel!", description))
+                core.chat_send_player(user:get_player_name(), S("Your @1 is out of fuel!", S(firstToUpper(style) .. " Jetpack")))
             end
             if get_nearby_jetpack(user) then
                 -- core.log("removed old jetpack entity...")
